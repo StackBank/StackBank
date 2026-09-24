@@ -1,0 +1,2420 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<title>StackBank</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;-webkit-font-smoothing:antialiased;-webkit-tap-highlight-color:transparent}
+:root{--bg:#0a0a0c;--s1:#111114;--s2:#17171b;--s3:#1e1e23;--bd:rgba(255,255,255,.07);--bd2:rgba(255,255,255,.13);--t:#f2f2f4;--t2:#9a9aa0;--t3:#636369;--green:#2ecc71;--red:#e74c3c;--blue:#5b8def;--accent:#7c8cff;--bronze:#8a6d43;--silver:#a8a8b0;--gold:#c9a961;--plat:#d4d4d8}
+html,body{height:100%;overflow-x:hidden;max-width:100vw;touch-action:manipulation;overscroll-behavior:none}
+body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg);color:var(--t);min-height:100vh;letter-spacing:-.01em;-webkit-text-size-adjust:100%}
+body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse 900px 600px at 20% -10%,rgba(90,105,175,.08),transparent 55%),radial-gradient(ellipse 700px 500px at 80% 110%,rgba(140,110,90,.04),transparent 55%);pointer-events:none;z-index:0}
+.mono{font-family:'JetBrains Mono',monospace;font-feature-settings:'tnum'}
+svg.ic{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0;display:block}
+svg.ic.lg{width:22px;height:22px}
+svg.ic.sm{width:14px;height:14px}
+
+.login{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;z-index:100;padding:20px;transition:opacity .4s,visibility .4s;overflow-y:auto}
+.login.hidden{opacity:0;visibility:hidden;pointer-events:none}
+.lc{width:100%;max-width:400px;background:var(--s1);border:1px solid var(--bd);border-radius:20px;padding:40px 32px 32px;box-shadow:0 24px 80px rgba(0,0,0,.6);position:relative;margin:auto;animation:lcIn .5s cubic-bezier(.22,1,.36,1)}
+@keyframes lcIn{from{opacity:0;transform:translateY(20px) scale(.97)}to{opacity:1;transform:none}}
+.wm{font-size:28px;font-weight:800;letter-spacing:-.045em;text-align:center;margin-bottom:8px}
+.wm span{color:var(--t3);font-weight:500}
+.ls{text-align:center;color:var(--t3);font-size:13px;margin-bottom:26px}
+.ms{display:flex;gap:2px;padding:3px;background:rgba(255,255,255,.03);border:1px solid var(--bd);border-radius:11px;margin-bottom:22px;position:relative}
+.mb{flex:1;padding:9px;border-radius:8px;border:none;background:transparent;color:var(--t3);font-family:inherit;font-size:13px;font-weight:500;cursor:pointer;transition:color .2s;position:relative;z-index:1}
+.mb.active{color:var(--t)}
+.ms-ind{position:absolute;top:3px;bottom:3px;left:3px;width:calc(50% - 3px);background:rgba(255,255,255,.07);border-radius:8px;transition:transform .25s cubic-bezier(.4,0,.2,1)}
+.ms-ind.right{transform:translateX(100%)}
+.f{margin-bottom:12px}
+.f label{display:block;font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--t3);margin-bottom:8px}
+.f input{width:100%;background:rgba(255,255,255,.025);border:1px solid var(--bd);border-radius:11px;padding:14px 16px;font-size:15px;color:var(--t);font-family:inherit;outline:none;transition:all .2s}
+.f input::placeholder{color:var(--t3)}
+.f input:focus{background:rgba(255,255,255,.05);border-color:rgba(255,255,255,.2)}
+.bp{width:100%;padding:14px;background:var(--t);color:#0a0a0c;border:none;border-radius:11px;font-size:14.5px;font-weight:600;font-family:inherit;cursor:pointer;margin-top:10px;transition:all .15s}
+.bp:hover:not(:disabled){background:#fff}
+.bp:active:not(:disabled){transform:scale(.99)}
+.bp:disabled{opacity:.5;cursor:not-allowed}
+.bs{width:100%;padding:13px;background:transparent;color:var(--t);border:1px solid var(--bd);border-radius:11px;font-size:14px;font-weight:500;font-family:inherit;cursor:pointer;margin-top:8px;transition:all .15s}
+.bs:hover{background:rgba(255,255,255,.04);border-color:var(--bd2)}
+.em{color:var(--red);font-size:12.5px;text-align:center;margin-top:14px;min-height:16px}
+.dv{display:flex;align-items:center;gap:12px;margin:18px 0 6px;color:var(--t3);font-size:11px;letter-spacing:.12em;font-weight:600}
+.dv::before,.dv::after{content:'';flex:1;height:1px;background:var(--bd)}
+
+.app{display:none;position:relative;z-index:1;width:100%;overflow-x:hidden}
+.app.active{display:block;animation:appIn .5s ease}
+@keyframes appIn{from{opacity:0}to{opacity:1}}
+header{position:sticky;top:0;z-index:50;padding:14px 28px;display:flex;align-items:center;justify-content:space-between;background:rgba(10,10,12,.78);backdrop-filter:blur(24px) saturate(180%);-webkit-backdrop-filter:blur(24px) saturate(180%);border-bottom:1px solid var(--bd)}
+.br{font-size:17px;font-weight:800;letter-spacing:-.03em}
+.br span{color:var(--t3);font-weight:500}
+.hr{display:flex;align-items:center;gap:6px}
+.ib{width:36px;height:36px;display:flex;align-items:center;justify-content:center;background:transparent;border:1px solid var(--bd);border-radius:50%;color:var(--t2);cursor:pointer;transition:all .15s;position:relative}
+.ib:hover{background:rgba(255,255,255,.04);color:var(--t);border-color:var(--bd2)}
+.ib .dot{position:absolute;top:4px;right:4px;min-width:15px;height:15px;padding:0 4px;border-radius:8px;background:var(--red);color:#fff;font-size:10px;font-weight:700;display:flex;align-items:center;justify-content:center;border:1.5px solid var(--bg)}
+.av{width:36px;height:36px;border-radius:50%;background:var(--s3);border:1px solid var(--bd2);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .15s;position:relative;overflow:hidden}
+.av:hover{border-color:rgba(255,255,255,.25)}
+.av svg{width:18px;height:18px;stroke:var(--t2);fill:none;stroke-width:1.6}
+.av .tier-ring{position:absolute;inset:-2px;border-radius:50%;padding:1.5px;background:conic-gradient(from 0deg,var(--bronze),var(--bronze));-webkit-mask:linear-gradient(#fff 0 0) content-box,linear-gradient(#fff 0 0);-webkit-mask-composite:xor;mask-composite:exclude;pointer-events:none}
+.av[data-tier="silver"] .tier-ring{background:conic-gradient(from 0deg,var(--silver),#6a6a72,var(--silver))}
+.av[data-tier="gold"] .tier-ring{background:conic-gradient(from 0deg,var(--gold),#8a7340,var(--gold))}
+.av[data-tier="platinum"] .tier-ring{background:conic-gradient(from 0deg,var(--plat),#8a8a92,#fff,var(--plat))}
+.ct{max-width:1000px;margin:0 auto;padding:24px 28px;width:100%;overflow-x:hidden}
+
+.bc{position:relative;border-radius:22px;padding:32px 36px;background:var(--s1);border:1px solid var(--bd);overflow:hidden;margin-bottom:20px;animation:cardIn .5s cubic-bezier(.22,1,.36,1)}
+@keyframes cardIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+.bc::after{content:'';position:absolute;top:-60%;right:-15%;width:520px;height:520px;background:radial-gradient(circle,rgba(120,140,220,.06),transparent 60%);border-radius:50%;pointer-events:none}
+.bl{font-size:11.5px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--t3);margin-bottom:14px;position:relative;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.tb{padding:3px 9px;border-radius:5px;font-size:10px;font-weight:600;letter-spacing:.08em;text-transform:uppercase}
+.tb[data-tier="bronze"]{background:rgba(138,109,67,.12);color:var(--bronze);border:1px solid rgba(138,109,67,.25)}
+.tb[data-tier="silver"]{background:rgba(168,168,176,.12);color:var(--silver);border:1px solid rgba(168,168,176,.25)}
+.tb[data-tier="gold"]{background:rgba(201,169,97,.12);color:var(--gold);border:1px solid rgba(201,169,97,.25)}
+.tb[data-tier="platinum"]{background:rgba(212,212,216,.12);color:var(--plat);border:1px solid rgba(212,212,216,.25)}
+.ba{font-size:48px;font-weight:700;letter-spacing:-.04em;line-height:1;position:relative;margin-bottom:10px}
+.ba .cur{color:var(--t3);font-weight:500;font-size:28px;margin-right:4px}
+.nw{font-size:12px;color:var(--t3);position:relative;margin-top:6px;display:flex;gap:18px;flex-wrap:wrap}
+.nw b{color:var(--t2);font-weight:600}
+
+.quick-actions{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:28px;position:relative}
+.qa{display:flex;flex-direction:column;align-items:center;gap:8px;padding:16px 8px 14px;background:rgba(255,255,255,.025);border:1px solid rgba(255,255,255,.06);border-radius:14px;color:var(--t);font-family:inherit;font-size:11.5px;font-weight:500;cursor:pointer;transition:all .2s}
+.qa:hover{background:rgba(255,255,255,.05);border-color:rgba(255,255,255,.12);transform:translateY(-1px)}
+.qa:active{transform:scale(.97)}
+.qa-icon{width:38px;height:38px;border-radius:50%;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);display:flex;align-items:center;justify-content:center;color:var(--t);transition:all .2s}
+.qa:hover .qa-icon{background:rgba(255,255,255,.09);transform:scale(1.05)}
+.qa-icon svg{width:16px;height:16px;stroke-width:1.8}
+.qa-label{color:var(--t2)}
+@media(max-width:520px){.qa{padding:13px 6px 11px;font-size:11px}.qa-icon{width:34px;height:34px}}
+
+.cr{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;margin-bottom:20px}
+.mc{background:var(--s1);border:1px solid var(--bd);border-radius:16px;padding:20px}
+.ml{font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--t3);margin-bottom:10px;display:flex;align-items:center;gap:7px}
+.ml svg{color:var(--t3);opacity:.8}
+.ma{font-size:24px;font-weight:700;letter-spacing:-.03em;margin-bottom:5px}
+.mn{font-size:11.5px;color:var(--t3);font-family:'JetBrains Mono',monospace;letter-spacing:.04em}
+
+.tabs{display:flex;gap:0;border-bottom:1px solid var(--bd);margin-bottom:20px;overflow-x:auto;overflow-y:hidden;scrollbar-width:none;-ms-overflow-style:none;scroll-behavior:smooth}
+.tabs::-webkit-scrollbar{display:none}
+.tab{padding:12px 16px 13px;border:none;background:transparent;color:var(--t3);font-family:inherit;font-size:13px;font-weight:500;cursor:pointer;transition:color .15s;white-space:nowrap;display:flex;align-items:center;gap:7px;position:relative;flex-shrink:0}
+.tab svg{width:14px;height:14px;opacity:.7}
+.tab:hover{color:var(--t2)}
+.tab.active{color:var(--t);font-weight:600}
+.tab.active::after{content:'';position:absolute;left:14px;right:14px;bottom:-1px;height:2px;background:var(--t);border-radius:2px 2px 0 0;animation:tabLine .3s cubic-bezier(.22,1,.36,1)}
+@keyframes tabLine{from{transform:scaleX(0)}to{transform:scaleX(1)}}
+
+.pn{display:none}
+.pn.active{display:block;animation:panelIn .35s cubic-bezier(.22,1,.36,1)}
+@keyframes panelIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.sc{background:var(--s1);border:1px solid var(--bd);border-radius:16px;padding:22px;margin-bottom:16px;animation:cardIn .4s cubic-bezier(.22,1,.36,1) backwards}
+.st{font-size:15px;font-weight:600;letter-spacing:-.015em;margin-bottom:18px;display:flex;align-items:center;justify-content:space-between;gap:12px}
+.st .meta{font-size:12px;color:var(--t3);font-weight:500;white-space:nowrap}
+
+.tl{display:flex;flex-direction:column}
+.tx{display:flex;align-items:center;gap:14px;padding:12px 8px;border-radius:10px;animation:txIn .3s cubic-bezier(.22,1,.36,1) backwards}
+.tx+.tx{border-top:1px solid rgba(255,255,255,.035)}
+.tx:nth-child(1){animation-delay:0s}
+.tx:nth-child(2){animation-delay:.04s}
+.tx:nth-child(3){animation-delay:.08s}
+.tx:nth-child(4){animation-delay:.12s}
+.tx:nth-child(5){animation-delay:.16s}
+@keyframes txIn{from{opacity:0;transform:translateX(-8px)}to{opacity:1;transform:none}}
+.ti{width:38px;height:38px;border-radius:10px;display:flex;align-items:center;justify-content:center;background:var(--s2);border:1px solid var(--bd);flex-shrink:0;color:var(--t2)}
+.ti.plus{color:var(--green)}
+.tinf{flex:1;min-width:0}
+.tn{font-size:13.5px;font-weight:500;margin-bottom:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:var(--t)}
+.td{font-size:11.5px;color:var(--t3)}
+.tam{font-size:13.5px;font-weight:600;font-family:'JetBrains Mono',monospace;white-space:nowrap}
+.tam.plus{color:var(--green)}
+.tam.minus{color:var(--t2)}
+.emp{text-align:center;padding:40px 20px;color:var(--t3);font-size:13.5px;display:flex;flex-direction:column;align-items:center;gap:12px}
+.emp svg{width:32px;height:32px;stroke:var(--t3);opacity:.4;fill:none;stroke-width:1.4}
+
+.show-all{width:100%;padding:12px;background:transparent;border:1px solid var(--bd);border-radius:11px;color:var(--t2);font-family:inherit;font-size:12.5px;font-weight:500;cursor:pointer;margin-top:12px;transition:all .15s;display:flex;align-items:center;justify-content:center;gap:6px}
+.show-all:hover{background:rgba(255,255,255,.04);color:var(--t);border-color:var(--bd2)}
+.show-all svg{width:12px;height:12px;stroke:currentColor;fill:none;stroke-width:2;transition:transform .25s}
+.show-all.expanded svg{transform:rotate(180deg)}
+
+.sk-row{display:flex;align-items:center;gap:14px;padding:12px 8px}
+.sk-circle{width:38px;height:38px;border-radius:10px;background:rgba(255,255,255,.05);flex-shrink:0;animation:skPulse 1.6s ease-in-out infinite}
+.sk-lines{flex:1;display:flex;flex-direction:column;gap:8px}
+.sk-line{height:12px;border-radius:6px;background:rgba(255,255,255,.05);animation:skPulse 1.6s ease-in-out infinite}
+.sk-line.short{width:40%}
+.sk-amount{width:60px;height:14px;border-radius:6px;background:rgba(255,255,255,.05);animation:skPulse 1.6s ease-in-out infinite}
+.sk-block{height:64px;border-radius:12px;background:rgba(255,255,255,.05);margin-bottom:10px;animation:skPulse 1.6s ease-in-out infinite}
+@keyframes skPulse{0%,100%{opacity:.6}50%{opacity:1}}
+
+.fg{margin-bottom:14px}
+.fg label{display:block;font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--t3);margin-bottom:8px}
+.inp,.sel{width:100%;background:var(--s2);border:1px solid var(--bd);border-radius:11px;padding:13px 15px;font-size:15px;color:var(--t);font-family:inherit;outline:none;transition:all .15s;appearance:none}
+.inp::placeholder{color:var(--t3)}
+.inp:focus,.sel:focus{background:var(--s3);border-color:rgba(255,255,255,.22)}
+.sel{background-image:url("data:image/svg+xml,%3Csvg width='10' height='6' viewBox='0 0 10 6' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%23636369' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 16px center;padding-right:38px}
+.fr{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media(max-width:560px){.fr{grid-template-columns:1fr}}
+input[type=number]::-webkit-inner-spin-button,input[type=number]::-webkit-outer-spin-button{-webkit-appearance:none;margin:0}
+input[type=number]{-moz-appearance:textfield}
+
+.qw{display:flex;flex-direction:column;align-items:center;gap:18px;padding:18px 0}
+.qb{padding:20px;background:#fff;border-radius:16px;display:flex;align-items:center;justify-content:center;box-shadow:0 12px 32px rgba(0,0,0,.35);min-height:260px;min-width:260px}
+.qb img{display:block!important;width:220px!important;height:220px!important;border-radius:6px}
+.qi{text-align:center}
+.qi .label{font-size:11px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--t3);margin-bottom:6px}
+.qi .val{font-size:14px;font-weight:500;font-family:'JetBrains Mono',monospace}
+
+.qr-mode-toggle{display:flex;gap:4px;padding:3px;background:rgba(255,255,255,.03);border:1px solid var(--bd);border-radius:11px;margin-bottom:14px}
+.qr-mode-btn{flex:1;padding:9px;border-radius:8px;border:none;background:transparent;color:var(--t3);font-family:inherit;font-size:13px;font-weight:500;cursor:pointer;transition:all .2s}
+.qr-mode-btn.active{background:rgba(255,255,255,.07);color:var(--t)}
+
+.scanner-body{position:relative;width:100%;aspect-ratio:1;background:#000;border-radius:16px;overflow:hidden;margin:16px 0}
+#qrReader{width:100%;height:100%}
+#qrReader video{width:100%!important;height:100%!important;object-fit:cover;display:block}
+
+.cv{width:100%;max-width:380px;aspect-ratio:1.586;border-radius:18px;padding:24px;background:linear-gradient(135deg,#1c1c22 0%,#262630 50%,#15151a 100%);border:1px solid rgba(255,255,255,.08);position:relative;overflow:hidden;display:flex;flex-direction:column;justify-content:space-between;box-shadow:0 20px 60px rgba(0,0,0,.5);margin:0 auto}
+.cv::before{content:'';position:absolute;top:-60%;right:-30%;width:400px;height:400px;background:radial-gradient(circle,rgba(255,255,255,.05),transparent 65%);border-radius:50%}
+.ct2{display:flex;justify-content:space-between;align-items:center;position:relative}
+.cch{width:38px;height:28px;border-radius:5px;background:linear-gradient(135deg,#6e6e78,#a8a8b2 50%,#6e6e78)}
+.cbr{font-size:14px;font-weight:700;letter-spacing:.02em}
+.cbr span{color:var(--t3);font-weight:500}
+.cn{font-size:19px;font-family:'JetBrains Mono',monospace;letter-spacing:.14em;font-weight:500;position:relative}
+.cbo{display:flex;gap:24px;position:relative}
+.cfl{font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--t3);margin-bottom:3px}
+.cfv{font-size:12.5px;font-weight:500;font-family:'JetBrains Mono',monospace}
+
+.pl{display:flex;flex-direction:column;gap:2px}
+.pi2{display:flex;align-items:center;gap:14px;padding:12px;animation:txIn .3s cubic-bezier(.22,1,.36,1) backwards}
+.pi2:nth-child(1){animation-delay:0s}
+.pi2:nth-child(2){animation-delay:.04s}
+.pi2:nth-child(3){animation-delay:.08s}
+.pi2:nth-child(4){animation-delay:.12s}
+.pi2:nth-child(5){animation-delay:.16s}
+.pdi{width:7px;height:7px;border-radius:50%;background:var(--blue);opacity:.7;flex-shrink:0}
+.pt{flex:1;font-size:13.5px;color:var(--t2)}
+.pt b{color:var(--t);font-weight:600}
+.ptm{font-size:11.5px;color:var(--t3);font-family:'JetBrains Mono',monospace}
+
+.jobs{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:10px;margin-bottom:18px}
+.job{padding:14px;background:var(--s2);border:1px solid var(--bd);border-radius:12px;cursor:pointer;transition:all .2s;text-align:left;color:var(--t);font-family:inherit;position:relative}
+.job.active{border-color:rgba(124,140,255,.4);background:rgba(124,140,255,.06)}
+.job.locked{opacity:.35;cursor:not-allowed}
+.job:hover:not(.locked){transform:translateY(-1px);border-color:var(--bd2)}
+.job-icon{width:32px;height:32px;border-radius:8px;background:rgba(255,255,255,.04);border:1px solid var(--bd);display:flex;align-items:center;justify-content:center;margin-bottom:10px;color:var(--t2)}
+.job.active .job-icon{color:var(--accent);border-color:rgba(124,140,255,.3);background:rgba(124,140,255,.08)}
+.job-name{font-size:13.5px;font-weight:600;margin-bottom:3px}
+.job-pay{font-size:11.5px;color:var(--t3);font-family:'JetBrains Mono',monospace}
+.job-level{position:absolute;top:10px;right:10px;font-size:9.5px;font-weight:600;padding:2px 7px;border-radius:4px;background:rgba(255,255,255,.05);color:var(--t3)}
+
+.ws{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:16px}
+.wst{padding:14px;background:var(--s2);border:1px solid var(--bd);border-radius:11px;text-align:center}
+.wsl{font-size:10px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--t3);margin-bottom:5px}
+.wsv{font-size:17px;font-weight:700;font-family:'JetBrains Mono',monospace}
+.ga{position:relative;width:100%;height:320px;background:var(--s2);border:1px solid var(--bd);border-radius:14px;overflow:hidden;margin-bottom:16px;cursor:crosshair;touch-action:manipulation;user-select:none}
+.gt{position:absolute;width:64px;height:64px;border-radius:50%;background:rgba(124,140,255,.15);border:1.5px solid rgba(124,140,255,.5);display:flex;align-items:center;justify-content:center;cursor:pointer;color:#9aa5ff;animation:targetPop .25s cubic-bezier(.22,1.4,.36,1)}
+@keyframes targetPop{from{transform:scale(.4);opacity:0}to{transform:scale(1);opacity:1}}
+.gt.bad{background:rgba(231,76,60,.15);border-color:rgba(231,76,60,.5);color:#ff7060}
+.gt.good{background:rgba(46,204,113,.15);border-color:rgba(46,204,113,.5);color:#4ddb8a}
+.gt svg{width:28px;height:28px;stroke:currentColor;fill:none;stroke-width:2}
+.gtm{position:absolute;top:12px;right:12px;padding:5px 12px;background:rgba(0,0,0,.5);border:1px solid var(--bd);border-radius:100px;font-size:13px;font-weight:600;font-family:'JetBrains Mono',monospace}
+.gsc{position:absolute;top:12px;left:12px;padding:5px 12px;background:rgba(0,0,0,.5);border:1px solid var(--bd);border-radius:100px;font-size:13px;font-weight:600;font-family:'JetBrains Mono',monospace;display:flex;align-items:center;gap:6px}
+.go{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;background:rgba(10,10,12,.94);text-align:center;padding:24px;z-index:2}
+.go h3{font-size:20px;font-weight:700;letter-spacing:-.02em}
+.go p{font-size:13.5px;color:var(--t2);max-width:320px;line-height:1.5}
+.result-big{font-size:32px;font-weight:800;color:var(--green);font-family:'JetBrains Mono',monospace;letter-spacing:-.03em}
+
+.dc{display:flex;flex-direction:column;gap:10px;padding:18px;background:var(--s2);border:1px solid var(--bd);border-radius:14px;margin-bottom:10px;animation:cardIn .35s cubic-bezier(.22,1,.36,1) backwards}
+.dh{display:flex;align-items:center;justify-content:space-between}
+.dr{font-size:11px;color:var(--green);font-weight:600;font-family:'JetBrains Mono',monospace;padding:3px 9px;background:rgba(46,204,113,.1);border-radius:5px}
+.da{font-size:24px;font-weight:700;letter-spacing:-.03em;font-family:'JetBrains Mono',monospace}
+.dm{font-size:11.5px;color:var(--t3)}
+.dac{display:flex;gap:8px;margin-top:2px}
+.dac button{flex:1;padding:10px;border-radius:9px;border:1px solid var(--bd);background:transparent;color:var(--t);font-family:inherit;font-size:12.5px;font-weight:500;cursor:pointer;transition:all .15s}
+.dac button:hover{background:rgba(255,255,255,.05);border-color:var(--bd2)}
+
+.setting-row{display:flex;justify-content:space-between;align-items:center;padding:13px 0;border-bottom:1px solid var(--bd);font-size:13.5px;gap:16px}
+.setting-row:last-child{border-bottom:none}
+.setting-row .k{color:var(--t3);flex-shrink:0}
+.setting-row .v{color:var(--t);text-align:right;word-break:break-all;font-family:'JetBrains Mono',monospace;font-size:12.5px}
+
+.mo{position:fixed;inset:0;background:rgba(5,5,7,.72);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);display:none;z-index:200;padding:20px;overflow-y:auto}
+.mo.active{display:flex;align-items:center;justify-content:center;animation:overlayIn .25s ease}
+@keyframes overlayIn{from{opacity:0}to{opacity:1}}
+.md{background:var(--s1);border:1px solid var(--bd);border-radius:18px;padding:28px;width:100%;max-width:420px;box-shadow:0 30px 80px rgba(0,0,0,.6);margin:auto;flex-shrink:0;animation:modalIn .42s cubic-bezier(.22,1,.4,1)}
+@keyframes modalIn{
+  0%{transform:translateY(24px) scale(.94);opacity:0}
+  60%{transform:translateY(-4px) scale(1.008);opacity:1}
+  100%{transform:translateY(0) scale(1);opacity:1}
+}
+.md.wide{max-width:480px}
+.md h3{font-size:18px;font-weight:600;margin-bottom:8px;letter-spacing:-.02em}
+.md p{font-size:13.5px;color:var(--t2);margin-bottom:20px;line-height:1.5}
+.ma2{display:flex;gap:8px;margin-top:18px}
+.bg{flex:1;padding:13px;background:transparent;border:1px solid var(--bd);border-radius:11px;color:var(--t);font-family:inherit;font-size:13.5px;font-weight:500;cursor:pointer;transition:all .15s}
+.bg:hover{background:rgba(255,255,255,.05);border-color:var(--bd2)}
+.md .bp{flex:1;margin-top:0;width:auto;padding:13px;display:flex;align-items:center;justify-content:center;text-align:center;font-size:13.5px;font-weight:500;border:1px solid transparent;background:var(--t);color:#0a0a0c;border-radius:11px}
+.md .bp[style*="background:var(--red)"]{background:var(--red)!important;color:#fff!important}
+.ph{display:flex;flex-direction:column;align-items:center;gap:12px;margin-bottom:20px}
+.pa{width:72px;height:72px;border-radius:50%;background:var(--s3);border:1px solid var(--bd2);display:flex;align-items:center;justify-content:center}
+.pa svg{width:32px;height:32px;stroke:var(--t2);fill:none;stroke-width:1.5}
+.pn2{font-size:19px;font-weight:600;text-align:center}
+.pe{font-size:12.5px;color:var(--t3);text-align:center}
+
+.pay-sheet{background:var(--s1);border:1px solid var(--bd);border-radius:22px;padding:24px;width:100%;max-width:400px;margin:auto;box-shadow:0 30px 80px rgba(0,0,0,.7);display:flex;flex-direction:column;gap:22px;position:relative;overflow:hidden}
+#qrPaymentOverlay .pay-sheet{opacity:0;transform:translateY(110vh)}
+#qrPaymentOverlay.active .pay-sheet{animation:paySheetUp .85s cubic-bezier(.16,1,.3,1) forwards}
+@keyframes paySheetUp{
+  0%{opacity:0;transform:translateY(110vh)}
+  30%{opacity:1}
+  75%{transform:translateY(-8px)}
+  100%{opacity:1;transform:translateY(0)}
+}
+.pay-to{display:flex;flex-direction:column;align-items:center;gap:14px;padding-bottom:20px;border-bottom:1px solid var(--bd)}
+.pay-avatar{width:56px;height:56px;border-radius:50%;background:linear-gradient(135deg,rgba(124,140,255,.3),rgba(60,60,80,.5));border:1px solid var(--bd2);display:flex;align-items:center;justify-content:center;color:var(--t)}
+.pay-avatar svg{width:26px;height:26px;stroke:var(--t2);fill:none;stroke-width:1.6}
+.pay-name{font-size:15px;font-weight:600;text-align:center}
+.pay-card{font-size:12.5px;color:var(--t3);font-family:'JetBrains Mono',monospace;margin-top:2px}
+.pay-amount{text-align:center}
+.pay-amount-label{font-size:11px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--t3);margin-bottom:10px}
+.pay-amount-input-wrap{display:flex;align-items:center;justify-content:center;gap:4px}
+.pay-dollar{font-size:32px;color:var(--t3);font-weight:500}
+.pay-amount-input{background:transparent;border:none;outline:none;font-family:'JetBrains Mono',monospace;font-size:44px;font-weight:700;color:var(--t);text-align:center;width:100%;max-width:220px;letter-spacing:-.04em;transition:transform .15s}
+.pay-amount-input::placeholder{color:var(--t3)}
+.pay-amount-input:focus{transform:scale(1.02)}
+.pay-amount-input[readonly]{color:var(--t)}
+.pay-fixed-badge{
+  display:none;
+  align-items:center;
+  gap:6px;
+  padding:6px 12px;
+  background:rgba(124,140,255,.1);
+  border:1px solid rgba(124,140,255,.28);
+  border-radius:100px;
+  font-size:11px;
+  font-weight:600;
+  color:var(--accent);
+  margin:10px auto 0;
+  width:fit-content;
+  animation:fadeUp .35s cubic-bezier(.22,1,.36,1);
+}
+.pay-fixed-badge svg{width:11px;height:11px;stroke:currentColor;fill:none;stroke-width:2.2}
+.pay-fixed-badge b{color:var(--t);font-weight:700;margin-left:2px}
+.pay-fixed-badge.active{display:inline-flex}
+.pay-chips{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.pay-chips.hidden{display:none}
+.pay-chip{padding:12px 8px;background:var(--s2);border:1px solid var(--bd);border-radius:11px;color:var(--t);font-family:'JetBrains Mono',monospace;font-size:14px;font-weight:600;cursor:pointer;transition:background .15s, border-color .15s, transform .12s cubic-bezier(.22,1.5,.36,1);text-align:center}
+.pay-chip:hover{background:var(--s3);border-color:var(--bd2)}
+.pay-chip:active{transform:scale(.94)}
+.pay-chip.active{background:rgba(124,140,255,.12);border-color:rgba(124,140,255,.4);color:var(--accent);animation:chipPop .32s cubic-bezier(.22,1.5,.36,1)}
+@keyframes chipPop{0%{transform:scale(1)}40%{transform:scale(1.08)}100%{transform:scale(1)}}
+.pay-note-wrap{position:relative}
+.pay-note-wrap .inp{padding-left:36px}
+.pay-note-icon{position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--t3);pointer-events:none}
+.pay-note-icon svg{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:1.8}
+.pay-submit{width:100%;padding:16px;background:var(--t);color:#0a0a0c;border:none;border-radius:13px;font-size:15px;font-weight:700;font-family:inherit;cursor:pointer;transition:background .15s, transform .12s, box-shadow .2s;display:flex;align-items:center;justify-content:center;gap:8px}
+.pay-submit:hover:not(:disabled){background:#fff;box-shadow:0 8px 24px rgba(255,255,255,.15)}
+.pay-submit:not(:disabled):active{transform:scale(.97)}
+.pay-submit:disabled{opacity:.4;cursor:not-allowed}
+.pay-cancel{width:100%;padding:12px;background:transparent;border:none;color:var(--t3);font-family:inherit;font-size:13.5px;font-weight:500;cursor:pointer;margin-top:-6px;transition:color .15s}
+.pay-cancel:hover{color:var(--t2)}
+
+.pay-success{
+  position:absolute;inset:0;
+  background:var(--s1);
+  border-radius:22px;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:18px;
+  opacity:0;pointer-events:none;
+  transition:opacity .3s ease;
+  z-index:5;padding:32px;
+}
+.pay-sheet.paid .pay-success{opacity:1;pointer-events:auto}
+.pay-check{
+  width:96px;height:96px;border-radius:50%;
+  background:radial-gradient(circle,rgba(46,204,113,.14),rgba(46,204,113,.02));
+  border:2.5px solid var(--green);
+  display:flex;align-items:center;justify-content:center;
+  box-shadow:0 0 50px rgba(46,204,113,.4);
+  transform:scale(0);opacity:0;
+  position:relative;
+}
+.pay-sheet.paid .pay-check{animation:checkPop .6s cubic-bezier(.16,1.15,.32,1) forwards}
+@keyframes checkPop{
+  0%{transform:scale(0);opacity:0}
+  50%{transform:scale(1.15);opacity:1;box-shadow:0 0 70px rgba(46,204,113,.6)}
+  75%{transform:scale(.96);opacity:1}
+  100%{transform:scale(1);opacity:1;box-shadow:0 0 50px rgba(46,204,113,.4)}
+}
+.pay-check::after{
+  content:'';position:absolute;inset:-12px;
+  border-radius:50%;border:1.5px solid rgba(46,204,113,.4);
+  opacity:0;
+}
+.pay-sheet.paid .pay-check::after{animation:ringPulse .9s .15s cubic-bezier(.16,1,.32,1) forwards}
+@keyframes ringPulse{
+  0%{opacity:.8;transform:scale(.85)}
+  100%{opacity:0;transform:scale(1.5)}
+}
+.pay-check svg{
+  width:48px;height:48px;
+  stroke:var(--green);fill:none;
+  stroke-width:3.2;stroke-linecap:round;stroke-linejoin:round;
+  overflow:visible;
+}
+.pay-check svg path{stroke-dasharray:25;stroke-dashoffset:25}
+.pay-sheet.paid .pay-check svg path{animation:checkDraw .5s .28s cubic-bezier(.65,0,.35,1) forwards}
+@keyframes checkDraw{to{stroke-dashoffset:0}}
+.pay-success-title{font-size:19px;font-weight:700;letter-spacing:-.02em;opacity:0;transform:translateY(14px)}
+.pay-success-amount{font-family:'JetBrains Mono',monospace;font-size:32px;font-weight:800;letter-spacing:-.03em;color:var(--green);opacity:0;transform:translateY(14px)}
+.pay-success-to{font-size:12.5px;color:var(--t3);font-family:'JetBrains Mono',monospace;opacity:0;transform:translateY(14px)}
+.pay-sheet.paid .pay-success-title{animation:successFadeUp .5s .65s cubic-bezier(.16,1,.32,1) forwards}
+.pay-sheet.paid .pay-success-amount{animation:successFadeUp .5s .78s cubic-bezier(.16,1,.32,1) forwards}
+.pay-sheet.paid .pay-success-to{animation:successFadeUp .5s .9s cubic-bezier(.16,1,.32,1) forwards}
+@keyframes successFadeUp{0%{opacity:0;transform:translateY(14px)}100%{opacity:1;transform:translateY(0)}}
+
+.mo.closing{animation:overlayOut .25s ease forwards}
+.mo.closing .md{animation:modalOut .25s ease forwards}
+.mo.closing .pay-sheet{animation:paySheetDown .4s cubic-bezier(.5,0,.75,0) forwards}
+@keyframes overlayOut{to{opacity:0}}
+@keyframes modalOut{to{transform:translateY(20px) scale(.95);opacity:0}}
+@keyframes paySheetDown{0%{opacity:1;transform:translateY(0)}100%{opacity:0;transform:translateY(110vh)}}
+
+/* TOAST — TOP CENTER (iOS style) */
+.toast{
+  position:fixed;
+  top:16px;
+  left:50%;
+  transform:translate(-50%, -140%);
+  background:rgba(28,28,32,.96);
+  backdrop-filter:blur(30px) saturate(180%);
+  -webkit-backdrop-filter:blur(30px) saturate(180%);
+  border:1px solid var(--bd2);
+  border-radius:14px;
+  padding:12px 18px;
+  color:var(--t);
+  font-size:13.5px;
+  font-weight:500;
+  box-shadow:0 20px 60px rgba(0,0,0,.6),0 0 0 .5px rgba(255,255,255,.06) inset;
+  opacity:0;
+  transition:transform .45s cubic-bezier(.22,1.2,.36,1), opacity .3s ease;
+  z-index:300;
+  display:flex;
+  align-items:center;
+  gap:10px;
+  max-width:calc(100vw - 32px);
+  width:max-content;
+  pointer-events:none;
+}
+.toast.show{transform:translate(-50%, 0);opacity:1}
+.toast::before{
+  content:'';
+  width:6px;height:6px;border-radius:50%;
+  background:var(--green);
+  box-shadow:0 0 8px var(--green);
+  flex-shrink:0;
+}
+.toast.error::before{background:var(--red);box-shadow:0 0 8px var(--red)}
+
+.ldr{width:14px;height:14px;border-radius:50%;border:2px solid rgba(0,0,0,.15);border-top-color:#0a0a0c;animation:sp .6s linear infinite;display:inline-block;vertical-align:middle}
+@keyframes sp{to{transform:rotate(360deg)}}
+
+@media(max-width:640px){
+  header{padding:12px 14px}
+  .hr{gap:5px}
+  .ib,.av,.lo{width:34px;height:34px}
+  .ct{padding:16px}
+  .bc{padding:24px 20px;border-radius:18px}
+  .ba{font-size:38px}
+  .ba .cur{font-size:22px}
+  .sc{padding:18px;border-radius:14px}
+  .tab{padding:11px 12px 12px;font-size:12.5px}
+  .tab.active::after{left:10px;right:10px}
+  .md{padding:22px}
+  .pay-sheet{padding:20px;gap:18px}
+  .pay-amount-input{font-size:38px}
+}
+</style>
+</head>
+<body>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+<defs>
+<symbol id="ic-send" viewBox="0 0 24 24"><path d="M7 17L17 7M9 7h8v8"/></symbol>
+<symbol id="ic-qr" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><path d="M14 14h3v3h-3zM21 14v3M14 21h3M21 21h.01"/></symbol>
+<symbol id="ic-scan" viewBox="0 0 24 24"><path d="M3 7V5a2 2 0 0 1 2-2h2M17 3h2a2 2 0 0 1 2 2v2M21 17v2a2 2 0 0 1-2 2h-2M7 21H5a2 2 0 0 1-2-2v-2M3 12h18"/></symbol>
+<symbol id="ic-work" viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></symbol>
+<symbol id="ic-deposit" viewBox="0 0 24 24"><path d="M3 12h18M3 12l3-4h12l3 4M5 12v6a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-6"/><circle cx="12" cy="9" r="1.5"/></symbol>
+<symbol id="ic-card" viewBox="0 0 24 24"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/></symbol>
+<symbol id="ic-pulse" viewBox="0 0 24 24"><path d="M3 12h4l2-6 4 12 2-6h6"/></symbol>
+<symbol id="ic-user" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21v-1a6 6 0 0 1 6-6h4a6 6 0 0 1 6 6v1"/></symbol>
+<symbol id="ic-bell" viewBox="0 0 24 24"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></symbol>
+<symbol id="ic-gift" viewBox="0 0 24 24"><polyline points="20 12 20 22 4 22 4 12"/><rect x="2" y="7" width="20" height="5"/><line x1="12" y1="22" x2="12" y2="7"/></symbol>
+<symbol id="ic-package" viewBox="0 0 24 24"><path d="M21 8l-9-5-9 5v8l9 5 9-5V8z"/><path d="M3 8l9 5 9-5M12 13v9"/></symbol>
+<symbol id="ic-shield" viewBox="0 0 24 24"><path d="M12 2l8 4v6c0 5-3.5 9.5-8 10-4.5-.5-8-5-8-10V6l8-4z"/><path d="M9 12l2 2 4-4"/></symbol>
+<symbol id="ic-chart" viewBox="0 0 24 24"><path d="M3 3v18h18"/><path d="M7 15l4-6 4 3 5-8"/></symbol>
+<symbol id="ic-star" viewBox="0 0 24 24"><path d="M12 2l3 6.5 7 1-5 5 1.2 7L12 18l-6.2 3.5L7 14.5 2 9.5l7-1L12 2z"/></symbol>
+<symbol id="ic-check" viewBox="0 0 24 24"><path d="M4 12l6 6L20 6"/></symbol>
+<symbol id="ic-arrow-down" viewBox="0 0 24 24"><path d="M12 5v14M5 12l7 7 7-7"/></symbol>
+<symbol id="ic-arrow-up" viewBox="0 0 24 24"><path d="M12 19V5M5 12l7-7 7 7"/></symbol>
+<symbol id="ic-inbox" viewBox="0 0 24 24"><path d="M22 12h-6l-2 3h-4l-2-3H2"/><path d="M5.45 5.11L2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"/></symbol>
+<symbol id="ic-briefcase" viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></symbol>
+<symbol id="ic-home" viewBox="0 0 24 24"><path d="M3 12L12 3l9 9"/><path d="M5 10v10a1 1 0 0 0 1 1h4v-6h4v6h4a1 1 0 0 0 1-1V10"/></symbol>
+<symbol id="ic-settings" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09a1.65 1.65 0 0 0-1-1.51 1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09a1.65 1.65 0 0 0 1.51-1 1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></symbol>
+<symbol id="ic-note" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></symbol>
+<symbol id="ic-lock" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></symbol>
+<symbol id="ic-chevron" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></symbol>
+</defs>
+</svg>
+
+<div class="login" id="login">
+<div class="lc">
+<div class="wm">Stack<span>Bank</span></div>
+<p class="ls" id="loginSub">Sign in to your account</p>
+<div class="ms">
+<div class="ms-ind" id="msInd"></div>
+<button class="mb active" id="modeLogin" onclick="setMode('login')">Sign in</button>
+<button class="mb" id="modeRegister" onclick="setMode('register')">Register</button>
+</div>
+<div class="f" id="nameField" style="display:none"><label>Full name</label><input type="text" id="regName" placeholder="Alex Kovalev"></div>
+<div class="f"><label>Email</label><input type="email" id="emailInput" placeholder="you@example.com"></div>
+<div class="f"><label>Password</label><input type="password" id="passInput" placeholder="At least 6 characters"></div>
+<button class="bp" id="authBtn" onclick="handleAuth()">Continue</button>
+<div class="dv">OR</div>
+<button class="bs" onclick="handleGuest()">Continue as Guest</button>
+<div class="em" id="errorMsg"></div>
+</div>
+</div>
+
+<div class="app" id="app">
+<header>
+<div class="br">Stack<span>Bank</span></div>
+<div class="hr">
+<button class="ib" id="paydayBtn" onclick="openPayday()" style="display:none" title="Daily PayDay"><svg class="ic"><use href="#ic-gift"/></svg></button>
+<button class="ib" onclick="startQRScanner()" title="Scan QR"><svg class="ic"><use href="#ic-scan"/></svg></button>
+<button class="ib" onclick="openNotifications()" title="Notifications"><svg class="ic"><use href="#ic-bell"/></svg><span class="dot" id="notifDot" style="display:none">0</span></button>
+<div class="av" id="avatarBtn" data-tier="bronze" onclick="openProfile()"><div class="tier-ring"></div><svg class="ic"><use href="#ic-user"/></svg></div>
+</div>
+</header>
+
+<div class="ct">
+<div class="bc">
+<div class="bl"><span id="greeting">Welcome</span><span class="tb" id="tierBadge" data-tier="bronze">Bronze</span></div>
+<div class="ba mono"><span class="cur">$</span><span id="totalBalance">0.00</span></div>
+<div class="nw" style="margin-top:14px"><span>Net worth: <b id="netWorth">$0.00</b></span><span>Total earned: <b id="totalEarned">$0.00</b></span></div>
+<div class="quick-actions">
+<button class="qa" onclick="switchToTab('transfer')"><div class="qa-icon"><svg class="ic"><use href="#ic-send"/></svg></div><span class="qa-label">Send</span></button>
+<button class="qa" onclick="switchToTab('qr')"><div class="qa-icon"><svg class="ic"><use href="#ic-qr"/></svg></div><span class="qa-label">Receive</span></button>
+<button class="qa" onclick="startQRScanner()"><div class="qa-icon"><svg class="ic"><use href="#ic-scan"/></svg></div><span class="qa-label">Scan</span></button>
+<button class="qa" onclick="switchToTab('work')"><div class="qa-icon"><svg class="ic"><use href="#ic-work"/></svg></div><span class="qa-label">Earn</span></button>
+</div>
+</div>
+
+<div class="cr" id="accountsRow"><div class="sk-block"></div></div>
+
+<div class="tabs" id="tabsNav">
+<button class="tab active" data-tab="history" onclick="switchTab(this,'history')"><svg class="ic"><use href="#ic-pulse"/></svg> Activity</button>
+<button class="tab" data-tab="transfer" onclick="switchTab(this,'transfer')"><svg class="ic"><use href="#ic-send"/></svg> Send</button>
+<button class="tab" data-tab="qr" onclick="switchTab(this,'qr')"><svg class="ic"><use href="#ic-qr"/></svg> Receive</button>
+<button class="tab" data-tab="card" onclick="switchTab(this,'card')"><svg class="ic"><use href="#ic-card"/></svg> Card</button>
+<button class="tab" data-tab="deposits" onclick="switchTab(this,'deposits')"><svg class="ic"><use href="#ic-deposit"/></svg> Deposits</button>
+<button class="tab" data-tab="work" onclick="switchTab(this,'work')"><svg class="ic"><use href="#ic-work"/></svg> Earn</button>
+<button class="tab" data-tab="pulse" onclick="switchTab(this,'pulse')"><svg class="ic"><use href="#ic-pulse"/></svg> Live</button>
+<button class="tab" data-tab="settings" onclick="switchTab(this,'settings')"><svg class="ic"><use href="#ic-settings"/></svg> Settings</button>
+</div>
+
+<div class="pn active" id="panel-history">
+<div class="sc">
+<div class="st">Recent Activity <span class="meta" id="txMeta">—</span></div>
+<div class="tl" id="txList">
+<div class="sk-row"><div class="sk-circle"></div><div class="sk-lines"><div class="sk-line"></div><div class="sk-line short"></div></div><div class="sk-amount"></div></div>
+<div class="sk-row"><div class="sk-circle"></div><div class="sk-lines"><div class="sk-line"></div><div class="sk-line short"></div></div><div class="sk-amount"></div></div>
+<div class="sk-row"><div class="sk-circle"></div><div class="sk-lines"><div class="sk-line"></div><div class="sk-line short"></div></div><div class="sk-amount"></div></div>
+</div>
+<button class="show-all" id="txShowAll" style="display:none" onclick="toggleTxExpand()"><span>Show all</span><svg><use href="#ic-chevron"/></svg></button>
+</div>
+</div>
+
+<div class="pn" id="panel-transfer">
+<div class="sc">
+<div class="st">Send Money</div>
+<div class="fg"><label>From</label><select class="sel" id="fromAcc"></select></div>
+<div class="fg"><label>Recipient card number</label><input class="inp mono" id="toCardNum" placeholder="0000 0000 0000 0000" inputmode="numeric" maxlength="19" oninput="formatCardInput(this)"></div>
+<div class="fg"><label>Amount, USD</label><input class="inp" id="amount" type="number" step="0.01" placeholder="0.00"></div>
+<div class="fg"><label>Note (optional)</label><input class="inp" id="note" placeholder="Dinner, rent..."></div>
+<button class="bp" onclick="doTransfer()">Send</button>
+<button class="bs" onclick="startQRScanner()" style="display:flex;align-items:center;justify-content:center;gap:8px"><svg class="ic sm"><use href="#ic-scan"/></svg> Scan QR code</button>
+</div>
+</div>
+
+<div class="pn" id="panel-qr">
+<div class="sc">
+<div class="st">Receive Payment</div>
+<div class="fg"><label>Receive to</label><select class="sel" id="qrAcc"></select></div>
+<div class="qr-mode-toggle">
+<button class="qr-mode-btn active" id="qrModeAny" onclick="setQRMode('any')">Any amount</button>
+<button class="qr-mode-btn" id="qrModeFixed" onclick="setQRMode('fixed')">Fixed amount</button>
+</div>
+<div class="fg" id="qrFixedWrap" style="display:none">
+<label>Amount, USD</label>
+<input class="inp" id="qrFixedAmount" type="number" step="0.01" placeholder="0.00" inputmode="decimal" oninput="updateQRFixedPreview()">
+</div>
+<div class="qw">
+<div class="qb" id="qrBox"></div>
+<div class="qi"><div class="label">Your card</div><div class="val" id="qrAccountLabel">—</div></div>
+</div>
+<button class="bp" onclick="regenerateQR()" style="margin-top:4px">Refresh QR</button>
+</div>
+</div>
+
+<div class="pn" id="panel-card">
+<div class="sc" style="display:flex;justify-content:center;padding:32px 20px">
+<div class="cv">
+<div class="ct2"><div class="cch"></div><div class="cbr">Stack<span>Bank</span></div></div>
+<div class="cn" id="cardNumber">•••• •••• •••• ••••</div>
+<div class="cbo">
+<div><div class="cfl">Holder</div><div class="cfv" id="cardHolder">—</div></div>
+<div><div class="cfl">Tier</div><div class="cfv" id="cardTier">BRONZE</div></div>
+<div><div class="cfl">CVV</div><div class="cfv">•••</div></div>
+</div>
+</div>
+</div>
+<div class="sc">
+<div class="st">Card Details</div>
+<div class="setting-row"><span class="k">Card number</span><span class="v" id="cardNumDetail">—</span></div>
+<div class="setting-row"><span class="k">Account</span><span class="v" id="cardAccDetail">—</span></div>
+<div class="setting-row"><span class="k">Status</span><span class="v" style="color:var(--green)">Active</span></div>
+<button class="bp" onclick="copyCard()" style="margin-top:16px">Copy card number</button>
+</div>
+</div>
+
+<div class="pn" id="panel-deposits">
+<div class="sc">
+<div class="st">Deposits <span class="meta">~0.1% / 5 min</span></div>
+<div id="depositsList"></div>
+<button class="bp" onclick="openDepositModal()" style="margin-top:8px">Open Deposit</button>
+</div>
+</div>
+
+<div class="pn" id="panel-work">
+<div class="sc">
+<div class="st"><span>Available Jobs</span><span class="meta" id="levelLabel">Level 1</span></div>
+<div class="jobs" id="jobsList"></div>
+</div>
+<div class="sc">
+<div class="st"><span id="activeJobName">Courier Shift</span><span class="meta" id="workCooldownLabel">Ready</span></div>
+<div class="ws">
+<div class="wst"><div class="wsl">Best</div><div class="wsv" id="workBest">0</div></div>
+<div class="wst"><div class="wsl">Today</div><div class="wsv" id="workToday">0</div></div>
+<div class="wst"><div class="wsl">Last</div><div class="wsv" id="workLast">$0</div></div>
+</div>
+<div class="ga" id="gameArena">
+<div class="go" id="gameOverlay">
+<h3 id="gameOverlayTitle">Ready to work?</h3>
+<p id="gameOverlayText">Tap "Start Shift". 20 seconds on the clock.</p>
+<button class="bp" id="gameStartBtn" onclick="startShift()" style="max-width:200px;margin:0">Start Shift</button>
+</div>
+</div>
+</div>
+</div>
+
+<div class="pn" id="panel-pulse">
+<div class="sc">
+<div class="st">Live Feed <span class="meta">real-time</span></div>
+<div class="pl" id="pulseList">
+<div class="sk-row"><div class="sk-circle"></div><div class="sk-lines"><div class="sk-line"></div><div class="sk-line short"></div></div></div>
+<div class="sk-row"><div class="sk-circle"></div><div class="sk-lines"><div class="sk-line"></div><div class="sk-line short"></div></div></div>
+<div class="sk-row"><div class="sk-circle"></div><div class="sk-lines"><div class="sk-line"></div><div class="sk-line short"></div></div></div>
+</div>
+<button class="show-all" id="pulseShowAll" style="display:none" onclick="togglePulseExpand()"><span>Show all</span><svg><use href="#ic-chevron"/></svg></button>
+</div>
+</div>
+
+<div class="pn" id="panel-settings">
+<div class="sc">
+<div class="st">Account</div>
+<div class="setting-row"><span class="k">Display name</span><span class="v" id="setName">—</span></div>
+<div class="setting-row"><span class="k">Email</span><span class="v" id="setEmail">—</span></div>
+<div class="setting-row"><span class="k">Tier</span><span class="v" id="setTier">—</span></div>
+<div class="setting-row"><span class="k">Level</span><span class="v" id="setLevel">—</span></div>
+<div class="setting-row"><span class="k">Member since</span><span class="v" id="setCreated">—</span></div>
+<button class="bp" onclick="openProfile()" style="margin-top:16px">Edit profile</button>
+</div>
+<div class="sc">
+<div class="st">Financial</div>
+<div class="setting-row"><span class="k">Total balance</span><span class="v" id="setBalance">—</span></div>
+<div class="setting-row"><span class="k">Net worth</span><span class="v" id="setNet">—</span></div>
+<div class="setting-row"><span class="k">Total earned</span><span class="v" id="setEarned">—</span></div>
+<div class="setting-row"><span class="k">Active deposits</span><span class="v" id="setDeposits">—</span></div>
+<button class="bp" onclick="recalculateEarned()" style="margin-top:16px;background:transparent;border:1px solid var(--bd);color:var(--t2)">Recalculate total earned</button>
+</div>
+<div class="sc">
+<div class="st" style="color:var(--red)">Danger zone</div>
+<p style="font-size:13px;color:var(--t3);margin-bottom:16px;line-height:1.5">Sign out of your account. Guest accounts are stored locally in your browser only.</p>
+<button class="bp" onclick="handleLogout()" style="background:transparent;border:1px solid rgba(231,76,60,.3);color:var(--red)">Sign out</button>
+<button class="bp" id="resetGuestBtn" onclick="resetGuestAccount()" style="display:none;margin-top:8px;background:transparent;border:1px solid rgba(231,76,60,.3);color:var(--red)">Reset guest account</button>
+</div>
+</div>
+</div>
+</div>
+
+<div class="mo" id="modalOverlay"><div class="md">
+<h3>Confirm transfer</h3><p id="modalText">—</p>
+<div class="ma2"><button class="bg" onclick="closeModal()">Cancel</button><button class="bp" id="modalConfirm" onclick="confirmTransfer()">Send</button></div>
+</div></div>
+
+<div class="mo" id="qrPaymentOverlay"><div class="pay-sheet">
+<div class="pay-success" id="paySuccess">
+<div class="pay-check"><svg viewBox="0 0 24 24"><path d="M4 12l6 6L20 6"/></svg></div>
+<div class="pay-success-title">Payment sent</div>
+<div class="pay-success-amount" id="paySuccessAmount">$0.00</div>
+<div class="pay-success-to" id="paySuccessTo">•••• •••• •••• ••••</div>
+</div>
+<div class="pay-to">
+<div class="pay-avatar"><svg><use href="#ic-user"/></svg></div>
+<div>
+<div class="pay-name">Pay to card</div>
+<div class="pay-card" id="payCardNum">•••• •••• •••• ••••</div>
+</div>
+</div>
+<div class="pay-amount">
+<div class="pay-amount-label">Amount</div>
+<div class="pay-amount-input-wrap">
+<span class="pay-dollar">$</span>
+<input type="number" step="0.01" class="pay-amount-input" id="payAmount" placeholder="0.00" inputmode="decimal">
+</div>
+<div class="pay-fixed-badge" id="payFixedBadge">
+<svg viewBox="0 0 24 24"><use href="#ic-lock"/></svg>
+<span>Set by recipient: <b id="payFixedAmountLabel">$0.00</b></span>
+</div>
+</div>
+<div class="pay-chips">
+<button class="pay-chip" onclick="setPayAmount(5)">$5</button>
+<button class="pay-chip" onclick="setPayAmount(10)">$10</button>
+<button class="pay-chip" onclick="setPayAmount(20)">$20</button>
+<button class="pay-chip" onclick="setPayAmount(50)">$50</button>
+</div>
+<div class="pay-note-wrap">
+<div class="pay-note-icon"><svg><use href="#ic-note"/></svg></div>
+<input class="inp" id="payNote" placeholder="Add a note" maxlength="80">
+</div>
+<button class="pay-submit" id="paySubmitBtn" onclick="submitQRPayment()">
+<svg class="ic sm" style="stroke:#0a0a0c"><use href="#ic-lock"/></svg>
+<span>Pay</span>
+</button>
+<button class="pay-cancel" onclick="closeQRPayment()">Cancel</button>
+</div></div>
+
+<div class="mo" id="scannerOverlay"><div class="md wide">
+<h3>Scan QR Code</h3><p>Point your camera at a StackBank QR code</p>
+<div class="scanner-body"><div id="qrReader"></div></div>
+<div class="ma2"><button class="bg" onclick="stopQRScanner()">Cancel</button></div>
+</div></div>
+
+<div class="mo" id="profileOverlay"><div class="md">
+<div class="ph"><div class="pa"><svg><use href="#ic-user"/></svg></div><div><div class="pn2" id="profileName">—</div><div class="pe" id="profileEmail">—</div></div></div>
+<div class="fg"><label>Display name</label><input class="inp" id="editName"></div>
+<div class="ma2"><button class="bg" onclick="closeProfile()">Cancel</button><button class="bp" onclick="saveProfile()">Save</button></div>
+</div></div>
+
+<div class="mo" id="paydayOverlay"><div class="md" style="text-align:center">
+<div style="width:64px;height:64px;margin:0 auto 16px;border-radius:50%;background:var(--s3);border:1px solid var(--bd2);display:flex;align-items:center;justify-content:center;color:var(--t2)"><svg style="width:30px;height:30px;stroke:currentColor;fill:none;stroke-width:1.8"><use href="#ic-gift"/></svg></div>
+<h3 id="paydayTitle">Daily PayDay</h3><p id="paydayText">Claim your reward.</p>
+<div class="mono" id="paydayAmount" style="font-size:32px;font-weight:800;letter-spacing:-.03em;margin:12px 0 22px">$2,500.00</div>
+<div class="ma2"><button class="bg" onclick="closePayday()">Later</button><button class="bp" id="paydayClaimBtn" onclick="claimPayday()">Claim</button></div>
+</div></div>
+
+<div class="mo" id="depositOverlay"><div class="md">
+<h3>Open Deposit</h3><p>Interest accrues every 5 minutes.</p>
+<div class="fg"><label>From account</label><select class="sel" id="depFromAcc"></select></div>
+<div class="fg"><label>Amount (min $100)</label><input class="inp" id="depAmount" type="number" step="0.01" placeholder="100.00"></div>
+<div class="ma2"><button class="bg" onclick="closeDepositModal()">Cancel</button><button class="bp" id="depOpenBtn" onclick="submitDeposit()">Open</button></div>
+</div></div>
+
+<div class="mo" id="notifOverlay"><div class="md">
+<h3>Notifications</h3><p>Latest activity</p>
+<div class="tl" id="notifList" style="max-height:400px;overflow-y:auto"></div>
+<div class="ma2"><button class="bg" onclick="closeNotifications()">Close</button></div>
+</div></div>
+
+<div class="mo" id="resetOverlay"><div class="md">
+<h3>Reset guest account?</h3>
+<p>All progress — balance, history, deposits — will be permanently lost. This cannot be undone.</p>
+<div class="ma2">
+<button class="bg" onclick="closeResetModal()">Cancel</button>
+<button class="bp" onclick="confirmResetGuest()" style="background:var(--red);color:#fff;border-color:transparent">Reset</button>
+</div>
+</div></div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+(function(){
+  var qrUrls = [
+    'https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js',
+    'https://unpkg.com/qrcode@1.5.3/build/qrcode.min.js',
+    'https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js'
+  ];
+  function loadQR(i){
+    if (i >= qrUrls.length) return;
+    var s = document.createElement('script');
+    s.src = qrUrls[i];
+    s.onload = function(){ if (window.QRCode) console.log('QR loaded:', qrUrls[i]); else loadQR(i+1); };
+    s.onerror = function(){ loadQR(i+1); };
+    document.head.appendChild(s);
+  }
+  loadQR(0);
+})();
+function loadScriptOnce(url){
+  return new Promise((resolve, reject) => {
+    if (document.querySelector('script[src="'+url+'"]')) return resolve();
+    const s = document.createElement('script');
+    s.src = url;
+    s.onload = resolve;
+    s.onerror = reject;
+    document.head.appendChild(s);
+  });
+}
+</script>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged, updateProfile } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+import { getFirestore, doc, getDoc, setDoc, updateDoc, collection, query, where, onSnapshot, serverTimestamp, limit, writeBatch, runTransaction, getDocs, addDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyACuf75r502H5E6wU-I9iDMjJoEq77hqEQ",
+  authDomain: "stackbank-1f778.firebaseapp.com",
+  projectId: "stackbank-1f778",
+  storageBucket: "stackbank-1f778.firebasestorage.app",
+  messagingSenderId: "337684763417",
+  appId: "1:337684763417:web:b37f8f862e0db6e6c02b88"
+};
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+
+const CFG = {
+  DEPOSIT_RATE_TICK: 0.001,
+  PAYDAY_AMOUNT: 250000,
+  CASHBACK_RATE: 0.01,
+  TICK_MS: 300000,
+  SALARY_PER_TICK: 40000,
+  START_BALANCE: 50000,
+};
+
+const JOBS = [
+  { id:'courier', name:'Courier', desc:'Tap packages', icon:'ic-package', minLevel:1, pay:[5000, 50000], cooldown:30000, duration:20 },
+  { id:'guard', name:'Security', desc:'Tap threats only', icon:'ic-shield', minLevel:3, pay:[10000, 100000], cooldown:45000, duration:20 },
+  { id:'analyst', name:'Analyst', desc:'Pick larger value', icon:'ic-chart', minLevel:5, pay:[20000, 200000], cooldown:60000, duration:18 },
+  { id:'trader', name:'Trader', desc:'React on green', icon:'ic-star', minLevel:8, pay:[50000, 400000], cooldown:90000, duration:20 },
+];
+
+const LS_DATA_KEY = 'stackbank_guest_data_v1';
+const LS_SESSION_KEY = 'stackbank_guest_session_v1';
+
+const state = {
+  user:null, profile:null, accounts:[], transactions:[], notifications:[], activity:[], deposits:[],
+  mode:'login', pending:null, unsubs:[], txUnsubs:[], depUnsub:null,
+  game:{active:false,score:0,errors:0,timeLeft:0,timer:null,spawnTimer:null},
+  workTodayCount:0, workBest:0, workLast:0, ticksDone:false, subscribedUid:null,
+  activeJob:JOBS[0], level:1, scanner:null,
+  qrPayment: null, qrMode: 'any', qrDebounce: null,
+  txExpanded: false, pulseExpanded: false,
+  txLoaded: false, pulseLoaded: false,
+  isLocalGuest: false, guestData: null,
+};
+
+const fmt = c => (c/100).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
+const esc = s => String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const $ = id => document.getElementById(id);
+const uid = () => state.user?.uid;
+const rnd = (a,b) => Math.floor(a + Math.random()*(b-a));
+const isGuest = () => state.isLocalGuest || !!(state.profile && state.profile.isGuest);
+
+function genCardNumber(){ let s='4821'; for(let i=0;i<12;i++) s+=Math.floor(Math.random()*10); return s; }
+function formatCard(n){ return String(n||'').replace(/(\d{4})(?=\d)/g,'$1 ').trim(); }
+function calcTier(nw){if(nw>=100000000)return'platinum';if(nw>=10000000)return'gold';if(nw>=1000000)return'silver';return'bronze';}
+function calcLevel(earned){return Math.max(1, Math.floor(Math.sqrt((earned||0)/50000)) + 1);}
+
+function tsNow(){ const n=Date.now(); return { toDate:()=>new Date(n), toMillis:()=>n, seconds:Math.floor(n/1000), nanoseconds:(n%1000)*1e6 }; }
+function ts(ms){ return { toDate:()=>new Date(ms), toMillis:()=>ms, seconds:Math.floor(ms/1000), nanoseconds:(ms%1000)*1e6 }; }
+function serTS(o){
+  if (o===null||o===undefined) return o;
+  if (Array.isArray(o)) return o.map(serTS);
+  if (typeof o==='object') {
+    if (typeof o.toMillis==='function') return { __ts: o.toMillis() };
+    const r={}; for (const k in o) r[k]=serTS(o[k]); return r;
+  }
+  return o;
+}
+function deTS(o){
+  if (o===null||o===undefined) return o;
+  if (Array.isArray(o)) return o.map(deTS);
+  if (typeof o==='object') {
+    if ('__ts' in o && Object.keys(o).length===1) return ts(o.__ts);
+    const r={}; for (const k in o) r[k]=deTS(o[k]); return r;
+  }
+  return o;
+}
+function newGuestData(){
+  const cardNum = genCardNumber();
+  const now = tsNow();
+  return {
+    profile: {
+      displayName:'Guest', avatar:'👤', tier:'bronze',
+      netWorthCents: CFG.START_BALANCE, totalEarnedCents: CFG.START_BALANCE,
+      isGuest: true, role:'individual',
+      createdAt: now, lastTickAt: now, lastWorkAt: null, lastPayDayAt: null,
+    },
+    account: {
+      id: 'local_main', ownerId: 'local_guest', type: 'main', currency:'USD',
+      balanceCents: CFG.START_BALANCE,
+      accountNumber: cardNum.slice(-8), cardNumber: cardNum,
+      status:'active', createdAt: now,
+    },
+    transactions: [{
+      id: 'tx_welcome_'+Date.now(),
+      fromAccount: 'WELCOME', toAccount: 'local_main',
+      fromOwnerId: null, toOwnerId: 'local_guest',
+      amountCents: CFG.START_BALANCE, currency: 'USD',
+      status: 'completed', type: 'welcome', note: 'Welcome bonus',
+      createdAt: now,
+    }],
+    deposits: [], notifications: [], activity: [],
+    counters: { workToday: 0, workBest: 0, workLast: 0 },
+  };
+}
+function loadGuestData(){
+  try { const raw = localStorage.getItem(LS_DATA_KEY); if (!raw) return null; return deTS(JSON.parse(raw)); }
+  catch(e){ console.warn('loadGuest:', e); return null; }
+}
+function saveGuestData(){
+  if (!state.isLocalGuest || !state.guestData) return;
+  try { localStorage.setItem(LS_DATA_KEY, JSON.stringify(serTS(state.guestData))); }
+  catch(e){ console.warn('saveGuest:', e); }
+}
+
+function syncGuestToState(){
+  if (!state.isLocalGuest) return;
+  state.profile = state.guestData.profile;
+  state.accounts = [state.guestData.account];
+  state.transactions = state.guestData.transactions;
+  state.deposits = state.guestData.deposits;
+  state.notifications = state.guestData.notifications;
+  state.activity = state.guestData.activity;
+  state.workTodayCount = state.guestData.counters?.workToday || 0;
+  state.workBest = state.guestData.counters?.workBest || 0;
+  state.workLast = state.guestData.counters?.workLast || 0;
+  state.level = calcLevel(state.profile.totalEarnedCents || 0);
+}
+
+function processLocalTick(){
+  if (!state.isLocalGuest) return;
+  const p = state.guestData.profile;
+  const last = p.lastTickAt?.toMillis?.() || 0;
+  const now = Date.now();
+  const ticks = Math.min(Math.floor((now - last) / CFG.TICK_MS), 288);
+  if (ticks < 1) return;
+  const salary = CFG.SALARY_PER_TICK * ticks;
+  state.guestData.account.balanceCents += salary;
+  p.totalEarnedCents = (p.totalEarnedCents || 0) + salary;
+  p.netWorthCents = state.guestData.account.balanceCents;
+  p.lastTickAt = tsNow();
+  state.guestData.transactions.unshift({
+    id: 'tx_salary_'+now, fromAccount: 'PAYROLL', toAccount: 'local_main',
+    fromOwnerId: null, toOwnerId: 'local_guest',
+    amountCents: salary, currency:'USD', status:'completed',
+    type:'payroll', note: ticks>1 ? `Salary ×${ticks}` : 'Salary',
+    createdAt: tsNow(),
+  });
+  saveGuestData();
+  syncGuestToState();
+  renderAccounts(); renderTransactions(); renderProfile(); renderSettings();
+}
+
+function tryAutoEnterGuest(){
+  try {
+    const session = localStorage.getItem(LS_SESSION_KEY);
+    if (session !== 'guest') return false;
+    const data = loadGuestData();
+    if (!data) return false;
+    state.isLocalGuest = true;
+    state.guestData = data;
+    syncGuestToState();
+    state.txLoaded = true;
+    state.pulseLoaded = true;
+    $('login').classList.add('hidden');
+    $('app').classList.add('active');
+    renderGreeting(); renderProfile(); renderSettings();
+    renderAccounts(); renderAccountSelects();
+    renderTransactions(); renderDeposits(); renderNotifications();
+    renderPulse(); renderJobs();
+    processLocalTick();
+    return true;
+  } catch(e){ console.warn('autoEnterGuest:', e); return false; }
+}
+
+async function migrateGuestToUser(userUid, guest){
+  const accRef = doc(db, 'accounts', 'main_' + userUid);
+  const userRef = doc(db, 'users', userUid);
+  const newAccId = accRef.id;
+  const cardNum = genCardNumber();
+
+  const balanceCents = guest.account?.balanceCents || 0;
+  const totalEarnedCents = guest.profile?.totalEarnedCents || 0;
+  const tier = guest.profile?.tier || calcTier(balanceCents);
+
+  try {
+    await setDoc(accRef, {
+      ownerId: userUid, type: 'main', currency: 'USD',
+      balanceCents,
+      accountNumber: cardNum.slice(-8),
+      cardNumber: cardNum,
+      status: 'active',
+      createdAt: serverTimestamp(),
+      migratedFromGuest: true,
+    }, { merge: true });
+
+    await setDoc(userRef, {
+      accountIds: [newAccId],
+      netWorthCents: balanceCents,
+      totalEarnedCents,
+      tier,
+      migratedFromGuest: true,
+    }, { merge: true });
+
+    const txs = guest.transactions || [];
+    let txCount = 0;
+    for (let i = 0; i < txs.length; i += 400) {
+      const chunk = txs.slice(i, i + 400);
+      const batch = writeBatch(db);
+      chunk.forEach(t => {
+        const newRef = doc(collection(db, 'transactions'));
+        const fromAcc = t.fromAccount === 'local_main' ? newAccId : t.fromAccount;
+        const toAcc   = t.toAccount   === 'local_main' ? newAccId : t.toAccount;
+        const fromOwn = t.fromOwnerId === 'local_guest' ? userUid : (t.fromOwnerId || null);
+        const toOwn   = t.toOwnerId   === 'local_guest' ? userUid : (t.toOwnerId || null);
+
+        let createdAtVal = new Date();
+        if (t.createdAt && typeof t.createdAt.toMillis === 'function') createdAtVal = new Date(t.createdAt.toMillis());
+        else if (t.createdAt?.seconds) createdAtVal = new Date(t.createdAt.seconds * 1000);
+
+        batch.set(newRef, {
+          fromAccount: fromAcc, toAccount: toAcc,
+          fromOwnerId: fromOwn, toOwnerId: toOwn,
+          amountCents: t.amountCents || 0,
+          currency: 'USD', status: 'completed',
+          type: t.type || 'transfer',
+          note: t.note || '',
+          createdAt: createdAtVal,
+          migratedFromGuest: true,
+        });
+      });
+      await batch.commit();
+      txCount += chunk.length;
+    }
+
+    const activeDeps = (guest.deposits || []).filter(d => d.status === 'active');
+    for (const d of activeDeps) {
+      const newDepRef = doc(collection(db, 'deposits'));
+      let openedAt = new Date(), lastAccrualAt = new Date();
+      if (d.openedAt?.toMillis) openedAt = new Date(d.openedAt.toMillis());
+      else if (d.openedAt?.seconds) openedAt = new Date(d.openedAt.seconds * 1000);
+      if (d.lastAccrualAt?.toMillis) lastAccrualAt = new Date(d.lastAccrualAt.toMillis());
+      else if (d.lastAccrualAt?.seconds) lastAccrualAt = new Date(d.lastAccrualAt.seconds * 1000);
+
+      await setDoc(newDepRef, {
+        ownerId: userUid, accountId: newAccId,
+        amountCents: d.amountCents || 0,
+        rate: d.rate || CFG.DEPOSIT_RATE_TICK,
+        status: 'active',
+        openedAt, lastAccrualAt,
+        migratedFromGuest: true,
+      });
+    }
+
+    const notifs = (guest.notifications || []).slice(0, 30);
+    for (const n of notifs) {
+      const nRef = doc(collection(db, 'notifications'));
+      let createdAtVal = new Date();
+      if (n.createdAt?.toMillis) createdAtVal = new Date(n.createdAt.toMillis());
+      else if (n.createdAt?.seconds) createdAtVal = new Date(n.createdAt.seconds * 1000);
+      await setDoc(nRef, {
+        userId: userUid, type: n.type || 'info',
+        title: n.title || '', body: n.body || '',
+        amountCents: n.amountCents || 0, read: true,
+        createdAt: createdAtVal, migratedFromGuest: true,
+      });
+    }
+
+    try { localStorage.removeItem(LS_DATA_KEY); } catch(e){}
+
+    return { migrated: true, txCount, depCount: activeDeps.length, balanceCents };
+  } catch(e) {
+    console.error('migrateGuestToUser failed:', e);
+    await createFirstAccount(userUid, false);
+    return { migrated: false, error: e.message };
+  }
+}
+
+window.formatCardInput = (el) => {
+  let v = el.value.replace(/\D/g,'').slice(0,16);
+  el.value = v.replace(/(\d{4})(?=\d)/g,'$1 ');
+};
+
+window.setMode = (mode) => {
+  state.mode = mode;
+  $('modeLogin').classList.toggle('active', mode==='login');
+  $('modeRegister').classList.toggle('active', mode==='register');
+  $('msInd').classList.toggle('right', mode==='register');
+  $('nameField').style.display = mode==='register' ? 'block' : 'none';
+  $('loginSub').textContent = mode==='login' ? 'Sign in to your account' : 'Create your StackBank account';
+  $('authBtn').textContent = mode==='login' ? 'Sign in' : 'Create account';
+  $('errorMsg').textContent = '';
+};
+
+window.handleAuth = async () => {
+  const email = $('emailInput').value.trim();
+  const pass = $('passInput').value;
+  const name = $('regName').value.trim();
+  const btn = $('authBtn'); const err = $('errorMsg'); err.textContent = '';
+  if (!email || !pass) return err.textContent = 'Enter email and password';
+  if (state.mode === 'register' && !name) return err.textContent = 'Enter your name';
+  if (state.mode === 'register' && pass.length < 6) return err.textContent = 'Password must be at least 6 characters';
+  btn.disabled = true; const t = btn.textContent; btn.innerHTML = '<span class="ldr"></span>';
+  try {
+    if (state.mode === 'login') {
+      await signInWithEmailAndPassword(auth, email, pass);
+      try { localStorage.setItem(LS_SESSION_KEY, 'user'); } catch(e){}
+    } else {
+      const cred = await createUserWithEmailAndPassword(auth, email, pass);
+      await updateProfile(cred.user, { displayName: name });
+      try { localStorage.setItem(LS_SESSION_KEY, 'user'); } catch(e){}
+      const pendingGuest = loadGuestData();
+      const hasProgress = pendingGuest && pendingGuest.account &&
+        ((pendingGuest.account.balanceCents > 0) || (pendingGuest.transactions || []).length > 0);
+      showToast(hasProgress ? 'Transferring guest progress…' : 'Welcome, ' + name.split(' ')[0]);
+    }
+  } catch (e) { err.textContent = prettify(e); }
+  finally { btn.disabled = false; btn.textContent = t; }
+};
+
+window.handleGuest = async () => {
+  const btn = document.querySelector('.bs'); const orig = btn.innerHTML;
+  btn.disabled = true; btn.textContent = 'Loading…';
+  try {
+    let data = loadGuestData();
+    if (!data) data = newGuestData();
+    state.isLocalGuest = true;
+    state.guestData = data;
+    try { localStorage.setItem(LS_SESSION_KEY, 'guest'); } catch(e){}
+    syncGuestToState();
+    state.txLoaded = true; state.pulseLoaded = true;
+    $('login').classList.add('hidden');
+    $('app').classList.add('active');
+    renderGreeting(); renderProfile(); renderSettings();
+    renderAccounts(); renderAccountSelects();
+    renderTransactions(); renderDeposits(); renderNotifications();
+    renderPulse(); renderJobs();
+    processLocalTick();
+    saveGuestData();
+    showToast('Signed in as guest · local mode');
+  } catch(e) { $('errorMsg').textContent = e.message || 'Guest mode failed'; console.warn(e); }
+  finally { btn.disabled = false; btn.innerHTML = orig; }
+};
+
+async function createProfile(user, name, isGuest) {
+  const ref = doc(db, 'users', user.uid);
+  const snap = await getDoc(ref).catch(()=>null);
+  if (snap && snap.exists()) return;
+  await setDoc(ref, {
+    email: user.email || null, displayName: name, role: 'individual', isGuest: !!isGuest,
+    tier: 'bronze', netWorthCents: 0, totalEarnedCents: 0,
+    lastWorkAt: null, lastPayDayAt: null, lastTickAt: serverTimestamp(),
+    createdAt: serverTimestamp(), lastSeen: serverTimestamp(),
+  }, { merge: true });
+}
+
+async function createFirstAccount(userUid, guest) {
+  const accRef = doc(db, 'accounts', 'main_' + userUid);
+  const userRef = doc(db, 'users', userUid);
+  const startBalance = guest ? 0 : CFG.START_BALANCE;
+  let justCreated = false;
+  try {
+    await runTransaction(db, async (t) => {
+      const accSnap = await t.get(accRef);
+      if (accSnap.exists()) return;
+      const cardNum = genCardNumber();
+      t.set(accRef, {
+        ownerId: userUid, type: 'main', currency: 'USD', balanceCents: startBalance,
+        accountNumber: cardNum.slice(-8), cardNumber: cardNum, status: 'active',
+        createdAt: serverTimestamp(),
+      });
+      const userSnap = await t.get(userRef);
+      const currentEarned = userSnap.exists() ? (userSnap.data().totalEarnedCents || 0) : 0;
+      t.set(userRef, {
+        accountIds: [accRef.id], netWorthCents: startBalance,
+        totalEarnedCents: currentEarned + startBalance,
+      }, { merge: true });
+      justCreated = true;
+    });
+  } catch(e) { console.warn('createFirstAccount:', e.message); }
+  if (justCreated && startBalance > 0) {
+    await addDoc(collection(db,'transactions'), {
+      fromAccount: 'WELCOME', toAccount: accRef.id, fromOwnerId: null, toOwnerId: userUid,
+      amountCents: startBalance, currency: 'USD', status: 'completed', type: 'welcome',
+      note: 'Welcome bonus', createdAt: serverTimestamp(),
+    }).catch(()=>{});
+  }
+  return accRef.id;
+}
+
+window.handleLogout = async () => {
+  if (state.isLocalGuest) {
+    state.isLocalGuest = false;
+    state.guestData = null;
+    state.profile = null; state.accounts = []; state.transactions = [];
+    state.deposits = []; state.notifications = []; state.activity = [];
+    state.txLoaded = false; state.pulseLoaded = false;
+    try { localStorage.removeItem(LS_SESSION_KEY); } catch(e){}
+    $('app').classList.remove('active');
+    $('login').classList.remove('hidden');
+    return;
+  }
+  try { localStorage.setItem(LS_SESSION_KEY, 'user'); } catch(e){}
+  state.unsubs.forEach(u => { try { u(); } catch(e){} });
+  state.txUnsubs.forEach(u => { try { u(); } catch(e){} });
+  if (state.depUnsub) try { state.depUnsub(); } catch(e){}
+  state.unsubs = []; state.txUnsubs = []; state.depUnsub = null;
+  state.ticksDone = false; state.subscribedUid = null;
+  state.txExpanded = false; state.pulseExpanded = false;
+  await signOut(auth);
+};
+
+window.resetGuestAccount = () => {
+  if (!state.isLocalGuest) { showToast('Not in guest mode', 'error'); return; }
+  $('resetOverlay').classList.add('active');
+};
+
+window.closeResetModal = () => {
+  const overlay = $('resetOverlay');
+  overlay.classList.add('closing');
+  setTimeout(() => overlay.classList.remove('active', 'closing'), 250);
+};
+
+window.confirmResetGuest = () => {
+  try {
+    localStorage.removeItem(LS_DATA_KEY);
+    localStorage.removeItem(LS_SESSION_KEY);
+  } catch(e){ console.warn('reset localStorage:', e); }
+
+  document.querySelectorAll('.mo').forEach(m => m.classList.remove('active', 'closing'));
+
+  state.isLocalGuest = false;
+  state.guestData = null;
+  state.profile = null;
+  state.accounts = [];
+  state.transactions = [];
+  state.deposits = [];
+  state.notifications = [];
+  state.activity = [];
+  state.txLoaded = false;
+  state.pulseLoaded = false;
+  state.workTodayCount = 0;
+  state.workBest = 0;
+  state.workLast = 0;
+  state.txExpanded = false;
+  state.pulseExpanded = false;
+
+  $('app').classList.remove('active');
+  $('login').classList.remove('hidden');
+
+  showToast('Guest account reset');
+};
+
+function prettify(e) {
+  const code = e?.code || '';
+  const map = {
+    'auth/invalid-email':'Invalid email','auth/user-not-found':'Account not found',
+    'auth/wrong-password':'Wrong password','auth/invalid-credential':'Wrong email or password',
+    'auth/email-already-in-use':'Email already in use','auth/weak-password':'Password too weak',
+    'auth/network-request-failed':'Network error',
+    'auth/operation-not-allowed':'Enable this sign-in method in Firebase',
+    'auth/admin-restricted-operation':'Enable Anonymous auth in Firebase Console',
+    'permission-denied':'Permission denied','unavailable':'Service unavailable, retry',
+  };
+  return map[code] || e?.message || 'Something went wrong';
+}
+
+onAuthStateChanged(auth, async (user) => {
+  if (state.isLocalGuest) return;
+
+  state.unsubs.forEach(u => { try { u(); } catch(e){} });
+  state.txUnsubs.forEach(u => { try { u(); } catch(e){} });
+  if (state.depUnsub) try { state.depUnsub(); } catch(e){}
+  state.unsubs = []; state.txUnsubs = []; state.depUnsub = null;
+  state.ticksDone = false; state.subscribedUid = null;
+
+  if (!user) {
+    state.user = null; state.profile = null; state.accounts = [];
+    $('login').classList.remove('hidden');
+    $('app').classList.remove('active');
+    return;
+  }
+  state.user = user;
+  $('login').classList.add('hidden');
+  $('app').classList.add('active');
+
+  const profileSnap = await getDoc(doc(db,'users',user.uid)).catch(()=>null);
+  if (!profileSnap || !profileSnap.exists()) {
+    const name = user.displayName || (user.email ? user.email.split('@')[0] : 'User');
+    await createProfile(user, name, false);
+
+    const guest = loadGuestData();
+    const hasGuestProgress = guest && guest.account &&
+      ((guest.account.balanceCents > 0) ||
+       (guest.transactions || []).length > 0 ||
+       (guest.deposits || []).some(d => d.status === 'active'));
+
+    if (hasGuestProgress) {
+      const result = await migrateGuestToUser(user.uid, guest);
+      if (result.migrated) {
+        setTimeout(() => {
+          showToast(`Guest progress migrated · $${fmt(result.balanceCents)} · ${result.txCount} ops`);
+        }, 800);
+      }
+    } else {
+      await createFirstAccount(user.uid, false);
+    }
+  } else {
+    const p = profileSnap.data();
+    if (!p.accountIds || p.accountIds.length === 0) {
+      await createFirstAccount(user.uid, false);
+    }
+  }
+
+  const profileUnsub = onSnapshot(doc(db,'users',user.uid), async (snap) => {
+    if (!snap.exists()) return;
+    state.profile = snap.data();
+    state.level = calcLevel(state.profile.totalEarnedCents || 0);
+    renderProfile(); renderGreeting(); renderJobs(); renderSettings();
+    if (!state.ticksDone) {
+      state.ticksDone = true;
+      processTicksIfNeeded(user.uid).catch(e => console.warn('tick:', e.message));
+    }
+    if (state.subscribedUid !== user.uid) {
+      state.subscribedUid = user.uid;
+      subscribeData(user.uid);
+    }
+  }, (err) => { console.warn('profile:', err.message); });
+  state.unsubs.push(profileUnsub);
+
+  const hb = setInterval(() => {
+    updateDoc(doc(db,'users',user.uid), { lastSeen: serverTimestamp() }).catch(()=>{});
+  }, 60000);
+  updateDoc(doc(db,'users',user.uid), { lastSeen: serverTimestamp() }).catch(()=>{});
+  state.unsubs.push(() => clearInterval(hb));
+});
+
+function renderGreeting() {
+  const h = new Date().getHours();
+  const g = h < 5 ? 'Good night' : h < 12 ? 'Good morning' : h < 18 ? 'Good afternoon' : 'Good evening';
+  $('greeting').textContent = g + ', ' + (state.profile?.displayName?.split(' ')[0] || 'friend');
+}
+
+function renderProfile() {
+  const p = state.profile || {};
+  $('avatarBtn').dataset.tier = p.tier || 'bronze';
+  $('tierBadge').dataset.tier = p.tier || 'bronze';
+  $('tierBadge').textContent = (p.tier || 'bronze').charAt(0).toUpperCase() + (p.tier || 'bronze').slice(1);
+  $('cardHolder').textContent = (p.displayName || 'CARDHOLDER').toUpperCase();
+  $('cardTier').textContent = (p.tier || 'bronze').toUpperCase();
+  $('profileName').textContent = p.displayName || '—';
+  $('profileEmail').textContent = p.isGuest ? 'Guest · local' : (p.email || '—');
+  $('netWorth').textContent = '$' + fmt(p.netWorthCents || 0);
+  $('totalEarned').textContent = '$' + fmt(p.totalEarnedCents || 0);
+  $('levelLabel').textContent = 'Level ' + (state.level || 1);
+  updatePaydayButton();
+}
+
+function renderSettings() {
+  const p = state.profile || {};
+  const balance = state.accounts.reduce((s,a)=>s+(a.balanceCents||0),0);
+  $('setName').textContent = p.displayName || '—';
+  $('setEmail').textContent = p.isGuest ? 'Guest · local' : (p.email || '—');
+  $('setTier').textContent = (p.tier || 'bronze').charAt(0).toUpperCase() + (p.tier || 'bronze').slice(1);
+  $('setLevel').textContent = state.level || 1;
+  $('setCreated').textContent = p.createdAt?.toDate ? p.createdAt.toDate().toLocaleDateString('en-US',{year:'numeric',month:'short',day:'numeric'}) : '—';
+  $('setBalance').textContent = '$' + fmt(balance);
+  $('setNet').textContent = '$' + fmt(p.netWorthCents || 0);
+  $('setEarned').textContent = '$' + fmt(p.totalEarnedCents || 0);
+  $('setDeposits').textContent = state.deposits.filter(d=>d.status==='active').length;
+  const resetBtn = $('resetGuestBtn');
+if (resetBtn) resetBtn.style.display = state.isLocalGuest ? 'block' : 'none';
+}
+
+function updatePaydayButton() {
+  const last = state.profile?.lastPayDayAt?.toMillis?.() || 0;
+  const ready = Date.now() - last >= 86400000;
+  const btn = $('paydayBtn');
+  btn.style.display = 'flex';
+  btn.style.opacity = ready ? '1' : '0.4';
+}
+
+async function processTicksIfNeeded(userUid) {
+  if (state.isLocalGuest) return;
+  const accRef = doc(db, 'accounts', 'main_' + userUid);
+  const userRef = doc(db, 'users', userUid);
+  try {
+    await runTransaction(db, async (t) => {
+      const aS = await t.get(accRef);
+      const uS = await t.get(userRef);
+      if (!aS.exists() || !uS.exists) return;
+      const last = uS.data().lastTickAt?.toMillis?.() || 0;
+      const ticks = Math.min(Math.floor((Date.now() - last) / CFG.TICK_MS), 288);
+      if (ticks < 1) return;
+      const salary = CFG.SALARY_PER_TICK * ticks;
+      const currentEarned = uS.data().totalEarnedCents || 0;
+      t.update(accRef, { balanceCents: (aS.data().balanceCents||0) + salary });
+      const pTx = doc(collection(db,'transactions'));
+      t.set(pTx, { fromAccount:'PAYROLL', toAccount:accRef.id, fromOwnerId:null, toOwnerId:userUid, amountCents:salary, currency:'USD', status:'completed', type:'payroll', note: ticks>1 ? `Salary ×${ticks}` : 'Salary', createdAt: serverTimestamp() });
+      t.update(userRef, { lastTickAt: serverTimestamp(), totalEarnedCents: currentEarned + salary });
+    });
+  } catch(e) { console.warn('payroll:', e.message); }
+  try {
+    const aS = await getDoc(accRef);
+    let total = aS.exists() ? (aS.data().balanceCents || 0) : 0;
+    await updateDoc(userRef, { netWorthCents: total, tier: calcTier(total) });
+  } catch(e) { console.warn('tier:', e.message); }
+}
+
+function subscribeData(userUid) {
+  const accRef = doc(db, 'accounts', 'main_' + userUid);
+  state.unsubs.push(onSnapshot(accRef, (snap) => {
+    if (snap.exists()) {
+      state.accounts = [{ id: snap.id, ...snap.data() }];
+      renderAccounts(); renderAccountSelects(); renderSettings();
+      subscribeTransactions([snap.id]);
+      subscribeDeposits(userUid);
+    }
+  }, (e) => console.warn('acc sub:', e.message)));
+
+  const notifQ = query(collection(db,'notifications'), where('userId','==',userUid), limit(30));
+  state.unsubs.push(onSnapshot(notifQ, (snap) => {
+    state.notifications = snap.docs.map(d => ({ id:d.id, ...d.data() }))
+      .sort((a,b) => (b.createdAt?.toMillis?.()||0) - (a.createdAt?.toMillis?.()||0));
+    const unread = state.notifications.filter(n => !n.read).length;
+    const b = $('notifDot');
+    if (unread > 0) { b.textContent = unread > 9 ? '9+' : unread; b.style.display = 'flex'; }
+    else b.style.display = 'none';
+    renderNotifications();
+  }, (e) => console.warn('notif:', e.message)));
+
+  const pulseQ = query(collection(db,'activity'), limit(30));
+  state.unsubs.push(onSnapshot(pulseQ, (snap) => {
+    state.activity = snap.docs.map(d => ({ id:d.id, ...d.data() }))
+      .sort((a,b) => (b.createdAt?.toMillis?.()||0) - (a.createdAt?.toMillis?.()||0))
+      .slice(0, 25);
+    state.pulseLoaded = true;
+    renderPulse();
+  }, (e) => console.warn('pulse:', e.message)));
+}
+
+function subscribeTransactions(ids) {
+  state.txUnsubs.forEach(u => { try { u(); } catch(e){} });
+  state.txUnsubs = [];
+  if (!ids.length) return;
+  const incoming = new Map(); const outgoing = new Map();
+  const merge = () => {
+    const all = [...outgoing.values(), ...incoming.values()];
+    const m = new Map(); all.forEach(t => m.set(t.id, t));
+    state.transactions = Array.from(m.values())
+      .sort((a,b) => (b.createdAt?.toMillis?.()||0) - (a.createdAt?.toMillis?.()||0))
+      .slice(0, 60);
+    state.txLoaded = true;
+    renderTransactions();
+  };
+  const q1 = query(collection(db,'transactions'), where('fromAccount','in',ids.slice(0,10)), limit(80));
+  state.txUnsubs.push(onSnapshot(q1, (s) => { outgoing.clear(); s.docs.forEach(d => outgoing.set(d.id, { id: d.id, ...d.data() })); merge(); }, (e) => console.warn('tx out:', e.message)));
+  const q2 = query(collection(db,'transactions'), where('toAccount','in',ids.slice(0,10)), limit(80));
+  state.txUnsubs.push(onSnapshot(q2, (s) => { incoming.clear(); s.docs.forEach(d => incoming.set(d.id, { id: d.id, ...d.data() })); merge(); }, (e) => console.warn('tx in:', e.message)));
+}
+
+function subscribeDeposits(userUid) {
+  if (state.depUnsub) try { state.depUnsub(); } catch(e){}
+  const q = query(collection(db,'deposits'), where('ownerId','==',userUid), limit(30));
+  state.depUnsub = onSnapshot(q, (snap) => {
+    state.deposits = snap.docs.map(d => ({ id:d.id, ...d.data() }))
+      .sort((a,b) => (b.openedAt?.toMillis?.()||0) - (a.openedAt?.toMillis?.()||0));
+    renderDeposits(); renderSettings();
+  }, (e) => console.warn('dep:', e.message));
+}
+
+function renderAccounts() {
+  const total = state.accounts.reduce((s,a)=>s+(a.balanceCents||0),0);
+  $('totalBalance').textContent = fmt(total);
+  const row = $('accountsRow');
+  if (!state.accounts.length) { row.innerHTML=''; return; }
+  row.innerHTML = state.accounts.map(a => `
+    <div class="mc">
+      <div class="ml"><svg class="ic sm"><use href="#ic-card"/></svg>Main Account</div>
+      <div class="ma mono">$${fmt(a.balanceCents||0)}</div>
+      <div class="mn">${formatCard(a.cardNumber) || ('•••• ' + String(a.accountNumber||'').slice(-4))}</div>
+    </div>`).join('');
+  const a = state.accounts[0];
+  if (a) {
+    $('cardNumber').textContent = formatCard(a.cardNumber) || '•••• •••• •••• ••••';
+    $('cardNumDetail').textContent = formatCard(a.cardNumber) || '—';
+    $('cardAccDetail').textContent = a.accountNumber ? ('•••• ' + String(a.accountNumber).slice(-4)) : '—';
+  }
+}
+
+function renderAccountSelects() {
+  const opts = state.accounts.map(a => `<option value="${a.id}">Main · ${String(a.accountNumber||'').slice(-4)}</option>`).join('');
+  ['fromAcc','qrAcc','depFromAcc'].forEach(id => { const el = $(id); if (el) el.innerHTML = opts; });
+  if (state.accounts[0]) $('qrAccountLabel').textContent = formatCard(state.accounts[0].cardNumber) || '—';
+}
+
+function renderTransactions() {
+  const el = $('txList');
+  if (!state.txLoaded) return;
+  if (!state.transactions.length) {
+    el.innerHTML = `<div class="emp"><svg><use href="#ic-inbox"/></svg><div>No transactions yet</div></div>`;
+    $('txMeta').textContent = '—';
+    $('txShowAll').style.display = 'none';
+    return;
+  }
+  const total = state.transactions.length;
+  const visible = state.txExpanded ? state.transactions : state.transactions.slice(0, 5);
+  $('txMeta').textContent = state.txExpanded ? `${total} ops` : `Last ${Math.min(5, total)}`;
+  const myIds = new Set(state.accounts.map(a=>a.id));
+  const iconMap = { work:'ic-work', payroll:'ic-briefcase', expense:'ic-home', payday:'ic-gift', deposit_open:'ic-inbox', deposit_close:'ic-send', deposit_interest:'ic-chart', transfer:'ic-send', welcome:'ic-star' };
+  el.innerHTML = visible.map(t => {
+    const isIn = myIds.has(t.toAccount) && !myIds.has(t.fromAccount);
+    const icon = iconMap[t.type] || (isIn ? 'ic-arrow-down' : 'ic-arrow-up');
+    const date = t.createdAt?.toDate ? formatDate(t.createdAt.toDate()) : 'Just now';
+    const name = t.note || (isIn ? 'Incoming' : 'Outgoing');
+    return `<div class="tx"><div class="ti ${isIn?'plus':'minus'}"><svg class="ic"><use href="#${icon}"/></svg></div><div class="tinf"><div class="tn">${esc(name)}</div><div class="td">${date}</div></div><div class="tam ${isIn?'plus':'minus'}">${isIn?'+':'−'}$${fmt(t.amountCents||0)}</div></div>`;
+  }).join('');
+  const btn = $('txShowAll');
+  if (total > 5) {
+    btn.style.display = 'flex';
+    btn.classList.toggle('expanded', state.txExpanded);
+    btn.querySelector('span').textContent = state.txExpanded ? 'Show less' : `Show all (${total})`;
+  } else {
+    btn.style.display = 'none';
+  }
+}
+
+window.toggleTxExpand = () => { state.txExpanded = !state.txExpanded; renderTransactions(); };
+window.togglePulseExpand = () => { state.pulseExpanded = !state.pulseExpanded; renderPulse(); };
+
+function renderDeposits() {
+  const el = $('depositsList');
+  const active = state.deposits.filter(d => d.status === 'active');
+  if (!active.length) { el.innerHTML = `<div class="emp"><svg><use href="#ic-deposit"/></svg><div>No active deposits</div></div>`; return; }
+  el.innerHTML = active.map(d => `
+    <div class="dc">
+      <div class="dh"><div class="da mono">$${fmt(d.amountCents||0)}</div><div class="dr">${((d.rate||0)*100).toFixed(2)}% / 5m</div></div>
+      <div class="dm">Opened ${d.openedAt?.toDate ? formatDate(d.openedAt.toDate()) : '—'}</div>
+      <div class="dac"><button onclick="closeDeposit('${d.id}')">Close & Withdraw</button></div>
+    </div>`).join('');
+}
+
+function renderNotifications() {
+  const el = $('notifList');
+  if (!state.notifications.length) { el.innerHTML = `<div class="emp"><svg><use href="#ic-bell"/></svg><div>No notifications</div></div>`; return; }
+  el.innerHTML = state.notifications.map(n => {
+    const icon = n.type==='work'?'ic-work':n.type==='incoming'?'ic-arrow-down':'ic-bell';
+    return `<div class="tx"><div class="ti ${n.type==='incoming'?'plus':''}"><svg class="ic"><use href="#${icon}"/></svg></div><div class="tinf"><div class="tn">${esc(n.title||'')}</div><div class="td">${esc(n.body||'')} · ${n.createdAt?.toDate ? formatDate(n.createdAt.toDate()) : ''}</div></div></div>`;
+  }).join('');
+}
+
+function renderPulse() {
+  const el = $('pulseList');
+  if (!state.pulseLoaded) return;
+  const feed = state.activity.filter(a => a.type !== 'new_account');
+  if (!feed.length) {
+    el.innerHTML = `<div class="emp"><svg><use href="#ic-pulse"/></svg><div>${state.isLocalGuest ? 'Local mode — no live feed' : 'Listening for events…'}</div></div>`;
+    $('pulseShowAll').style.display = 'none';
+    return;
+  }
+  const total = feed.length;
+  const visible = state.pulseExpanded ? feed : feed.slice(0, 5);
+  const labels = { transfer: (a) => `Transfer · <b>$${fmt(a.amountCents||0)}</b>`, work: (a) => `Shift completed · <b>+$${fmt(a.amountCents||0)}</b>` };
+  el.innerHTML = visible.map((a) => {
+    const text = (labels[a.type] || (()=>'Event'))(a);
+    const time = a.createdAt?.toDate ? formatDate(a.createdAt.toDate()) : 'now';
+    return `<div class="pi2"><div class="pdi"></div><div class="pt">${text}</div><div class="ptm">${time}</div></div>`;
+  }).join('');
+  const btn = $('pulseShowAll');
+  if (total > 5) {
+    btn.style.display = 'flex';
+    btn.classList.toggle('expanded', state.pulseExpanded);
+    btn.querySelector('span').textContent = state.pulseExpanded ? 'Show less' : `Show all (${total})`;
+  } else {
+    btn.style.display = 'none';
+  }
+}
+
+function renderJobs() {
+  const el = $('jobsList');
+  el.innerHTML = JOBS.map(j => {
+    const locked = state.level < j.minLevel;
+    const active = state.activeJob.id === j.id;
+    return `<button class="job ${active?'active':''} ${locked?'locked':''}" onclick="${locked?'':'selectJob(\''+j.id+'\')'}">
+      <div class="job-level">L${j.minLevel}</div>
+      <div class="job-icon"><svg class="ic lg"><use href="#${j.icon}"/></svg></div>
+      <div class="job-name">${j.name}</div>
+      <div class="job-pay">$${fmt(j.pay[0])}–$${fmt(j.pay[1])}</div>
+    </button>`;
+  }).join('');
+  if (state.activeJob) $('activeJobName').textContent = state.activeJob.name;
+}
+
+window.selectJob = (id) => {
+  const j = JOBS.find(x => x.id === id);
+  if (!j) return;
+  if (state.level < j.minLevel) return showToast('Level too low', 'error');
+  state.activeJob = j;
+  $('activeJobName').textContent = j.name;
+  renderJobs(); updateWorkUI();
+  $('gameOverlayTitle').textContent = j.name;
+  $('gameOverlayText').textContent = j.desc + '. ' + j.duration + ' seconds on the clock.';
+};
+
+function formatDate(d) {
+  const now = new Date();
+  const same = d.toDateString() === now.toDateString();
+  const y = new Date(now); y.setDate(now.getDate()-1);
+  const isY = d.toDateString() === y.toDateString();
+  const t = d.toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit'});
+  if (same) return `Today, ${t}`;
+  if (isY) return `Yesterday, ${t}`;
+  return d.toLocaleDateString('en-US',{month:'short',day:'numeric'});
+}
+
+window.switchTab = (btn,id) => {
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.pn').forEach(p=>p.classList.remove('active'));
+  btn.classList.add('active');
+  $('panel-'+id).classList.add('active');
+  try { btn.scrollIntoView({ behavior: 'smooth', inline: 'nearest', block: 'nearest' }); } catch(e){}
+  if (id === 'qr') regenerateQR();
+  if (id === 'work') updateWorkUI();
+  if (id === 'settings') renderSettings();
+};
+window.switchToTab = (id) => {
+  const btn = document.querySelector(`.tab[data-tab="${id}"]`);
+  if (btn) switchTab(btn, id);
+};
+
+let qrRenderToken = 0;
+async function waitForQRCode(maxMs = 5000) {
+  const start = Date.now();
+  while (!window.QRCode) {
+    if (Date.now() - start > maxMs) return false;
+    await new Promise(r => setTimeout(r, 50));
+  }
+  return true;
+}
+
+async function renderQRToBox(payload) {
+  const box = $('qrBox');
+  const myToken = ++qrRenderToken;
+  box.innerHTML = '<div style="color:#000;font-size:12px;text-align:center;padding:40px 20px;font-family:Inter,sans-serif">Loading…</div>';
+
+  const ok = await waitForQRCode(5000);
+  if (myToken !== qrRenderToken) return false;
+  if (!ok) { box.innerHTML = '<div style="color:#000;font-size:12px;text-align:center;padding:40px 20px">QR unavailable</div>'; return false; }
+
+  if (typeof QRCode.toCanvas === 'function') {
+    try {
+      const canvas = document.createElement('canvas');
+      await new Promise((res, rej) => {
+        QRCode.toCanvas(canvas, payload, { width: 220, margin: 1, errorCorrectionLevel: 'M', color: { dark: '#000000', light: '#ffffff' } }, e => e ? rej(e) : res());
+      });
+      if (myToken !== qrRenderToken) return false;
+      canvas.style.cssText = 'display:block!important;width:220px!important;height:220px!important';
+      box.innerHTML = ''; box.appendChild(canvas);
+      return true;
+    } catch(e) { console.warn('toCanvas:', e); }
+  }
+
+  if (typeof QRCode === 'function') {
+    try {
+      const tmp = document.createElement('div');
+      tmp.style.cssText = 'position:fixed;left:-9999px;top:-9999px;width:220px;height:220px;background:#fff';
+      document.body.appendChild(tmp);
+      new QRCode(tmp, { text: payload, width: 220, height: 220, colorDark: '#000000', colorLight: '#ffffff', correctLevel: QRCode.CorrectLevel ? QRCode.CorrectLevel.M : 0 });
+      let dataUrl = null;
+      for (let i = 0; i < 60 && !dataUrl; i++) {
+        if (myToken !== qrRenderToken) { tmp.remove(); return false; }
+        await new Promise(r => setTimeout(r, 50));
+        const img = tmp.querySelector('img');
+        if (img && img.src && img.src.indexOf('data:image') === 0) { dataUrl = img.src; break; }
+        const cvs = tmp.querySelector('canvas');
+        if (cvs && cvs.width > 0) { try { dataUrl = cvs.toDataURL('image/png'); } catch(e) {} if (dataUrl) break; }
+      }
+      tmp.remove();
+      if (myToken !== qrRenderToken) return false;
+      if (!dataUrl) { box.innerHTML = '<div style="color:#000;font-size:12px;text-align:center;padding:40px 20px">QR failed</div>'; return false; }
+      const fresh = document.createElement('img');
+      fresh.src = dataUrl;
+      fresh.style.cssText = 'display:block;width:220px;height:220px;border-radius:6px;background:#fff';
+      box.innerHTML = ''; box.appendChild(fresh);
+      return true;
+    } catch(e) { console.warn('qrcodejs:', e); }
+  }
+  box.innerHTML = '<div style="color:#000;font-size:12px;text-align:center;padding:40px 20px">QR failed</div>';
+  return false;
+}
+
+window.setQRMode = (mode) => {
+  state.qrMode = mode;
+  $('qrModeAny').classList.toggle('active', mode === 'any');
+  $('qrModeFixed').classList.toggle('active', mode === 'fixed');
+  $('qrFixedWrap').style.display = mode === 'fixed' ? 'block' : 'none';
+  regenerateQR();
+};
+
+window.updateQRFixedPreview = () => {
+  clearTimeout(state.qrDebounce);
+  state.qrDebounce = setTimeout(() => regenerateQR(), 600);
+};
+
+window.regenerateQR = async () => {
+  const box = $('qrBox');
+  const start = Date.now();
+  while ((!state.accounts || !state.accounts.length) && Date.now() - start < 3000) await new Promise(r => setTimeout(r, 100));
+  if (!state.accounts.length) { box.innerHTML = '<div style="color:#000;font-size:12px;padding:40px 20px;text-align:center">Loading…</div>'; return; }
+  const acc = state.accounts[0];
+  const token = Array.from(crypto.getRandomValues(new Uint8Array(10))).map(b => b.toString(16).padStart(2,'0')).join('');
+
+  let payload = `stackbank://pay?card=${acc.cardNumber}&t=${token}`;
+  let amtCents = null;
+  if (state.qrMode === 'fixed') {
+    const amtUsd = parseFloat($('qrFixedAmount').value) || 0;
+    if (amtUsd > 0) { amtCents = Math.round(amtUsd * 100); payload += `&amt=${amtCents}`; }
+  }
+
+  await renderQRToBox(payload);
+
+  if (!state.isLocalGuest) {
+    setDoc(doc(db,'qr_tokens',token), {
+      accountId: acc.id, cardNumber: acc.cardNumber,
+      amountCents: amtCents, used: false,
+      createdAt: serverTimestamp(), expiresAt: new Date(Date.now() + 900000)
+    }).catch(e => console.warn('qr save:', e.message));
+  }
+};
+
+window.startQRScanner = async () => {
+  if (isGuest()) { showToast('Guests cannot send payments', 'error'); return; }
+  $('scannerOverlay').classList.add('active');
+  if (!window.Html5Qrcode) {
+    try { await loadScriptOnce('https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js'); }
+    catch(e) {
+      try { await loadScriptOnce('https://cdn.jsdelivr.net/npm/html5-qrcode@2.3.8/html5-qrcode.min.js'); }
+      catch(e2) { showToast('Scanner unavailable', 'error'); $('scannerOverlay').classList.remove('active'); return; }
+    }
+  }
+  if (!window.Html5Qrcode) { showToast('Scanner unavailable', 'error'); $('scannerOverlay').classList.remove('active'); return; }
+  try {
+    state.scanner = new Html5Qrcode("qrReader");
+    await state.scanner.start({ facingMode: "environment" }, { fps: 10, qrbox: { width: 240, height: 240 } }, (t) => onScanSuccess(t), () => {});
+  } catch(e) { console.warn('scanner:', e); showToast('Camera access denied', 'error'); stopQRScanner(); }
+};
+
+window.stopQRScanner = async () => {
+  const overlay = $('scannerOverlay');
+  if (!overlay.classList.contains('active')) return;
+  overlay.classList.add('closing');
+  await new Promise(r => setTimeout(r, 250));
+  overlay.classList.remove('active', 'closing');
+  if (state.scanner) {
+    try { await state.scanner.stop(); } catch(e){}
+    try { state.scanner.clear(); } catch(e){}
+    state.scanner = null;
+  }
+};
+
+async function onScanSuccess(text) {
+  await stopQRScanner();
+  await new Promise(r => setTimeout(r, 650));
+
+  let card = null, amtCents = null;
+  try {
+    const url = new URL(text);
+    card = url.searchParams.get('card');
+    const amt = url.searchParams.get('amt');
+    if (amt) { const parsed = parseInt(amt, 10); if (parsed > 0) amtCents = parsed; }
+  } catch(e) {}
+  if (!card) { const clean = text.replace(/\D/g,''); if (clean.length === 16) card = clean; }
+  if (!card || card.length !== 16) { showToast('Unknown QR code', 'error'); return; }
+  if (state.accounts[0] && state.accounts[0].cardNumber === card) { showToast('This is your own card', 'error'); return; }
+  openQRPayment(card, amtCents);
+}
+
+function openQRPayment(card, fixedAmountCents = null) {
+  state.qrPayment = { card, amountCents: 0, note: '', fixedAmountCents };
+  $('payCardNum').textContent = formatCard(card);
+  const amountInput = $('payAmount');
+  const chips = document.querySelector('.pay-chips');
+  const badge = $('payFixedBadge');
+
+  if (fixedAmountCents && fixedAmountCents > 0) {
+    amountInput.value = (fixedAmountCents / 100).toFixed(2);
+    amountInput.readOnly = true;
+    amountInput.setAttribute('inputmode', 'none');
+    chips.classList.add('hidden');
+    badge.classList.add('active');
+    $('payFixedAmountLabel').textContent = '$' + fmt(fixedAmountCents);
+  } else {
+    amountInput.value = '';
+    amountInput.readOnly = false;
+    amountInput.setAttribute('inputmode', 'decimal');
+    chips.classList.remove('hidden');
+    badge.classList.remove('active');
+  }
+
+  $('payNote').value = '';
+  document.querySelectorAll('.pay-chip').forEach(c => c.classList.remove('active'));
+  document.querySelector('.pay-sheet').classList.remove('paid');
+  updatePayButton();
+  $('qrPaymentOverlay').classList.add('active');
+  if (!fixedAmountCents) setTimeout(() => { try { $('payAmount').focus({ preventScroll: true }); } catch(e) {} }, 500);
+}
+
+window.closeQRPayment = () => {
+  const overlay = $('qrPaymentOverlay');
+  overlay.classList.add('closing');
+  setTimeout(() => {
+    overlay.classList.remove('active', 'closing');
+    document.querySelector('.pay-sheet')?.classList.remove('paid');
+    state.qrPayment = null;
+  }, 400);
+};
+
+window.setPayAmount = (dollars) => {
+  $('payAmount').value = dollars.toFixed(2);
+  document.querySelectorAll('.pay-chip').forEach(c => {
+    c.classList.toggle('active', c.textContent === '$' + dollars);
+  });
+  updatePayButton();
+};
+
+$('payAmount')?.addEventListener('input', () => {
+  document.querySelectorAll('.pay-chip').forEach(c => c.classList.remove('active'));
+  updatePayButton();
+});
+
+function updatePayButton() {
+  const amount = parseFloat($('payAmount').value) || 0;
+  const btn = $('paySubmitBtn');
+  const span = btn.querySelector('span');
+  span.textContent = amount > 0 ? `Pay $${amount.toFixed(2)}` : 'Pay';
+  btn.disabled = amount <= 0;
+}
+
+window.submitQRPayment = async () => {
+  if (!state.qrPayment) return;
+  if (isGuest()) { showToast('Guests cannot send payments', 'error'); return; }
+  const amountUsd = parseFloat($('payAmount').value);
+  if (!amountUsd || amountUsd <= 0) return showToast('Enter amount', 'error');
+  const amountCents = Math.round(amountUsd * 100);
+  const note = $('payNote').value.trim();
+  const toCardNumber = state.qrPayment.card;
+
+  const btn = $('paySubmitBtn');
+  const origHtml = btn.innerHTML;
+  btn.disabled = true;
+  btn.innerHTML = '<span class="ldr"></span>';
+
+  try {
+    const fromAccount = state.accounts[0];
+    if (!fromAccount) throw new Error('No account');
+    if (fromAccount.balanceCents < amountCents) throw new Error('Insufficient funds');
+
+    const toQ = await getDocs(query(collection(db,'accounts'), where('cardNumber','==',toCardNumber), limit(1)));
+    if (toQ.empty) throw new Error('Recipient not found');
+    const toDoc = toQ.docs[0];
+
+    const cashbackCents = Math.floor(amountCents * CFG.CASHBACK_RATE);
+    const fromRef = doc(db,'accounts',fromAccount.id);
+    const toRef = doc(db,'accounts',toDoc.id);
+    const txRef = doc(collection(db,'transactions'));
+
+    await runTransaction(db, async (t) => {
+      const fromSnap = await t.get(fromRef);
+      const toSnap = await t.get(toRef);
+      if (!fromSnap.exists || !toSnap.exists) throw new Error('Account missing');
+      const from = fromSnap.data(); const to = toSnap.data();
+      if (from.ownerId !== uid()) throw new Error('Not your account');
+      if (from.balanceCents < amountCents) throw new Error('Insufficient funds');
+      t.update(fromRef, { balanceCents: from.balanceCents - amountCents + cashbackCents });
+      t.update(toRef, { balanceCents: to.balanceCents + amountCents });
+      t.set(txRef, { fromAccount: fromRef.id, toAccount: toRef.id, fromOwnerId: uid(), toOwnerId: to.ownerId, amountCents, currency: 'USD', status: 'completed', type: 'transfer', note: note || 'QR payment', cashbackCents, createdAt: serverTimestamp() });
+      const nRef = doc(collection(db,'notifications'));
+      t.set(nRef, { userId: to.ownerId, type: 'incoming', title: 'Incoming transfer', body: `You received $${(amountCents/100).toFixed(2)}`, amountCents, read: false, createdAt: serverTimestamp() });
+    });
+
+    try { await addDoc(collection(db,'activity'), { type: 'transfer', amountCents, createdAt: serverTimestamp() }); } catch(e){}
+
+    $('paySuccessAmount').textContent = '$' + fmt(amountCents);
+    $('paySuccessTo').textContent = formatCard(toCardNumber);
+    document.querySelector('.pay-sheet').classList.add('paid');
+    btn.innerHTML = origHtml;
+    showToast(`Paid $${fmt(amountCents)}`);
+
+    setTimeout(() => closeQRPayment(), 2200);
+  } catch(e) {
+    showToast(prettify(e), 'error');
+    btn.disabled = false;
+    btn.innerHTML = origHtml;
+    updatePayButton();
+  }
+};
+
+window.doTransfer = () => {
+  if (isGuest()) return showToast('Guests cannot send transfers', 'error');
+  const fromAccountId = $('fromAcc').value;
+  const rawCard = $('toCardNum').value.replace(/\s/g,'');
+  const amountUsd = parseFloat($('amount').value);
+  const note = $('note').value.trim();
+  if (!rawCard || rawCard.length !== 16) return showToast('Enter valid 16-digit card number','error');
+  if (!amountUsd || amountUsd <= 0) return showToast('Enter a valid amount','error');
+  const amountCents = Math.round(amountUsd*100);
+  const from = state.accounts.find(a=>a.id===fromAccountId);
+  if (from && from.balanceCents < amountCents) return showToast('Insufficient funds','error');
+  if (from && from.cardNumber === rawCard) return showToast('Cannot send to your own card','error');
+  state.pending = { fromAccountId, toCardNumber: rawCard, amountCents, note };
+  $('modalText').innerHTML = `Send <b>$${fmt(amountCents)}</b> to card <b>${formatCard(rawCard)}</b>`;
+  $('modalOverlay').classList.add('active');
+};
+window.closeModal = () => {
+  const overlay = $('modalOverlay');
+  overlay.classList.add('closing');
+  setTimeout(() => { overlay.classList.remove('active', 'closing'); state.pending = null; }, 250);
+};
+
+window.confirmTransfer = async () => {
+  if (isGuest()) { showToast('Guests cannot send transfers', 'error'); closeModal(); return; }
+  const btn = $('modalConfirm'); btn.disabled = true; btn.innerHTML = '<span class="ldr"></span>';
+  const { fromAccountId, toCardNumber, amountCents, note } = state.pending;
+  try {
+    const toQ = await getDocs(query(collection(db,'accounts'), where('cardNumber','==',toCardNumber), limit(1)));
+    if (toQ.empty) throw new Error('Card not found');
+    const toDoc = toQ.docs[0];
+    if (toDoc.id === fromAccountId) throw new Error('Cannot send to same account');
+    const cashbackCents = Math.floor(amountCents * CFG.CASHBACK_RATE);
+    const fromRef = doc(db,'accounts',fromAccountId);
+    const toRef = doc(db,'accounts',toDoc.id);
+    const txRef = doc(collection(db,'transactions'));
+    await runTransaction(db, async (t) => {
+      const fromSnap = await t.get(fromRef);
+      const toSnap = await t.get(toRef);
+      if (!fromSnap.exists || !toSnap.exists) throw new Error('Account missing');
+      const from = fromSnap.data(); const to = toSnap.data();
+      if (from.ownerId !== uid()) throw new Error('Not your account');
+      if (from.balanceCents < amountCents) throw new Error('Insufficient funds');
+      t.update(fromRef, { balanceCents: from.balanceCents - amountCents + cashbackCents });
+      t.update(toRef, { balanceCents: to.balanceCents + amountCents });
+      t.set(txRef, { fromAccount: fromRef.id, toAccount: toRef.id, fromOwnerId: uid(), toOwnerId: to.ownerId, amountCents, currency: 'USD', status: 'completed', type: 'transfer', note: note || '', cashbackCents, createdAt: serverTimestamp() });
+      const nRef = doc(collection(db,'notifications'));
+      t.set(nRef, { userId: to.ownerId, type: 'incoming', title: 'Incoming transfer', body: `You received $${(amountCents/100).toFixed(2)}`, amountCents, read: false, createdAt: serverTimestamp() });
+    });
+    try { await addDoc(collection(db,'activity'), { type: 'transfer', amountCents, createdAt: serverTimestamp() }); } catch(e){}
+    showToast(`Sent $${fmt(amountCents)}`);
+    closeModal();
+    $('amount').value=''; $('toCardNum').value=''; $('note').value='';
+  } catch(e) { showToast(prettify(e),'error'); }
+  finally { btn.disabled=false; btn.textContent='Send'; }
+};
+
+window.updateWorkUI = () => {
+  const j = state.activeJob;
+  const last = state.profile?.lastWorkAt?.toMillis?.() || 0;
+  const elapsed = Date.now() - last;
+  if (elapsed < j.cooldown && !state.game.active) $('workCooldownLabel').textContent = `Cooldown ${Math.ceil((j.cooldown - elapsed)/1000)}s`;
+  else if (!state.game.active) $('workCooldownLabel').textContent = 'Ready';
+  $('workBest').textContent = state.workBest;
+  $('workToday').textContent = state.workTodayCount;
+  $('workLast').textContent = '$' + fmt(state.workLast);
+};
+
+window.startShift = () => {
+  const j = state.activeJob;
+  const last = state.profile?.lastWorkAt?.toMillis?.() || 0;
+  if (Date.now() - last < j.cooldown) return showToast('Shift cooldown active','error');
+  if (state.game.active) return;
+  state.game.active = true; state.game.score = 0; state.game.errors = 0; state.game.timeLeft = j.duration;
+  const arena = $('gameArena');
+  $('gameOverlay').style.display = 'none';
+  arena.querySelectorAll('.gt,.gtm,.gsc').forEach(n => n.remove());
+  const timerEl = document.createElement('div');
+  timerEl.className = 'gtm'; timerEl.textContent = j.duration + 's'; arena.appendChild(timerEl);
+  const scoreEl = document.createElement('div');
+  scoreEl.className = 'gsc';
+  scoreEl.innerHTML = `<svg class="ic sm" style="stroke:var(--gold)"><use href="#ic-star"/></svg><span>0</span>`;
+  arena.appendChild(scoreEl);
+  if (j.id === 'courier') runCourier(arena, scoreEl);
+  else if (j.id === 'guard') runGuard(arena, scoreEl);
+  else if (j.id === 'analyst') runAnalyst(arena, scoreEl);
+  else if (j.id === 'trader') runTrader(arena, scoreEl);
+  state.game.timer = setInterval(() => {
+    state.game.timeLeft--;
+    timerEl.textContent = state.game.timeLeft + 's';
+    if (state.game.timeLeft <= 0) endShift();
+  }, 1000);
+};
+
+function runCourier(arena, scoreEl) {
+  const spawn = () => {
+    if (!state.game.active) return;
+    const el = document.createElement('div');
+    el.className = 'gt';
+    el.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:28px;height:28px"><use href="#ic-package"/></svg>';
+    const rect = arena.getBoundingClientRect();
+    el.style.left = Math.random() * (rect.width - 64) + 'px';
+    el.style.top = Math.random() * (rect.height - 64) + 'px';
+    el.addEventListener('click', (e) => { e.stopPropagation(); if (!state.game.active) return; state.game.score++; scoreEl.querySelector('span').textContent = state.game.score; el.remove(); });
+    arena.appendChild(el);
+    setTimeout(() => el.remove(), 1400);
+    state.game.spawnTimer = setTimeout(spawn, Math.max(320, 850 - state.game.score * 15));
+  };
+  spawn();
+}
+function runGuard(arena, scoreEl) {
+  const spawn = () => {
+    if (!state.game.active) return;
+    const isThreat = Math.random() > 0.4;
+    const el = document.createElement('div');
+    el.className = 'gt ' + (isThreat ? 'bad' : 'good');
+    el.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:28px;height:28px"><use href="#${isThreat?'ic-shield':'ic-check'}"/></svg>`;
+    const rect = arena.getBoundingClientRect();
+    el.style.left = Math.random() * (rect.width - 64) + 'px';
+    el.style.top = Math.random() * (rect.height - 64) + 'px';
+    el.addEventListener('click', (e) => { e.stopPropagation(); if (!state.game.active) return; if (isThreat) { state.game.score++; scoreEl.querySelector('span').textContent = state.game.score; } else { state.game.errors++; } el.remove(); });
+    arena.appendChild(el);
+    setTimeout(() => el.remove(), 1600);
+    state.game.spawnTimer = setTimeout(spawn, Math.max(360, 900 - state.game.score * 15));
+  };
+  spawn();
+}
+function runAnalyst(arena, scoreEl) {
+  const spawn = () => {
+    if (!state.game.active) return;
+    const a = rnd(100, 999), b = rnd(100, 999);
+    const correct = Math.max(a,b);
+    const el = document.createElement('div');
+    el.style.cssText = 'position:absolute;display:flex;gap:14px;left:50%;top:50%;transform:translate(-50%,-50%);';
+    const mk = (val) => {
+      const btn = document.createElement('button');
+      btn.textContent = val;
+      btn.style.cssText = 'width:100px;height:100px;border-radius:16px;background:rgba(124,140,255,.08);border:1.5px solid rgba(124,140,255,.35);color:#9aa5ff;font-size:28px;font-weight:800;font-family:JetBrains Mono,monospace;cursor:pointer;';
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation(); if (!state.game.active) return;
+        if (val === correct) { state.game.score++; scoreEl.querySelector('span').textContent = state.game.score; el.remove(); setTimeout(spawn, 250); }
+        else { state.game.errors++; el.remove(); setTimeout(spawn, 400); }
+      });
+      return btn;
+    };
+    el.appendChild(mk(a)); el.appendChild(mk(b));
+    arena.appendChild(el);
+    setTimeout(() => { if (el.parentNode) { el.remove(); setTimeout(spawn, 200); } }, 1800);
+  };
+  spawn();
+}
+function runTrader(arena, scoreEl) {
+  const spawn = () => {
+    if (!state.game.active) return;
+    const isGreen = Math.random() > 0.45;
+    const el = document.createElement('div');
+    el.className = 'gt ' + (isGreen ? 'good' : 'bad');
+    el.style.width = '80px'; el.style.height = '80px';
+    el.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="width:32px;height:32px"><use href="#${isGreen?'ic-arrow-up':'ic-arrow-down'}"/></svg>`;
+    const rect = arena.getBoundingClientRect();
+    el.style.left = Math.random() * (rect.width - 80) + 'px';
+    el.style.top = Math.random() * (rect.height - 80) + 'px';
+    el.addEventListener('click', (e) => {
+      e.stopPropagation(); if (!state.game.active) return;
+      if (isGreen) { state.game.score += 2; scoreEl.querySelector('span').textContent = state.game.score; }
+      else { state.game.errors++; state.game.score = Math.max(0, state.game.score - 1); scoreEl.querySelector('span').textContent = state.game.score; }
+      el.remove();
+    });
+    arena.appendChild(el);
+    setTimeout(() => el.remove(), 1200);
+    state.game.spawnTimer = setTimeout(spawn, Math.max(320, 750 - state.game.score * 12));
+  };
+  spawn();
+}
+
+async function endShift() {
+  clearInterval(state.game.timer); clearTimeout(state.game.spawnTimer);
+  state.game.active = false;
+  const arena = $('gameArena');
+  arena.querySelectorAll('.gt,.gtm,.gsc').forEach(n => n.remove());
+  const j = state.activeJob;
+  const score = state.game.score;
+  const maxScore = j.id === 'trader' ? 30 : (j.id === 'analyst' ? 12 : 25);
+  const ratio = Math.max(0, Math.min(1, score / maxScore));
+  const errorsRatio = Math.max(0, 1 - state.game.errors * 0.15);
+  const finalRatio = ratio * errorsRatio;
+  state.workTodayCount++;
+  if (score > state.workBest) state.workBest = score;
+  updateWorkUI();
+  $('gameOverlay').style.display = 'flex';
+  $('gameOverlayTitle').textContent = 'Shift complete';
+  $('gameOverlayText').innerHTML = `Score: <b>${score}</b>. Payout pending…`;
+  const btn = $('gameStartBtn');
+  btn.disabled = true; btn.textContent = 'Sending…';
+  const reward = Math.floor(j.pay[0] + (j.pay[1] - j.pay[0]) * finalRatio);
+  const label = j.name + ' shift';
+
+  if (state.isLocalGuest) {
+    state.guestData.account.balanceCents += reward;
+    state.guestData.profile.totalEarnedCents = (state.guestData.profile.totalEarnedCents || 0) + reward;
+    state.guestData.profile.netWorthCents = state.guestData.account.balanceCents;
+    state.guestData.profile.lastWorkAt = tsNow();
+    state.guestData.transactions.unshift({
+      id: 'tx_work_'+Date.now(),
+      fromAccount: 'WORK', toAccount: 'local_main',
+      fromOwnerId: null, toOwnerId: 'local_guest',
+      amountCents: reward, currency:'USD', status:'completed',
+      type:'work', note: label, createdAt: tsNow(),
+    });
+    state.guestData.notifications.unshift({
+      id: 'n_work_'+Date.now(), userId:'local_guest', type:'work',
+      title:'Shift payout', body:`${label} · +$${(reward/100).toFixed(2)}`,
+      amountCents: reward, read:false, createdAt: tsNow(),
+    });
+    state.guestData.counters = state.guestData.counters || {};
+    state.guestData.counters.workToday = state.workTodayCount;
+    state.guestData.counters.workBest = state.workBest;
+    state.guestData.counters.workLast = reward;
+    state.workLast = reward;
+    saveGuestData();
+    syncGuestToState();
+    updateWorkUI();
+    renderAccounts(); renderTransactions(); renderNotifications(); renderProfile(); renderSettings();
+    $('gameOverlayText').innerHTML = `Score: <b>${score}</b>.<br><span class="result-big" style="font-size:26px">+$${fmt(reward)}</span>`;
+    btn.textContent = 'Shift Again'; btn.disabled = false;
+    showToast(`Shift payout: $${fmt(reward)}`);
+    return;
+  }
+
+  try {
+    const accRef = doc(db, 'accounts', 'main_' + uid());
+    const userRef = doc(db,'users',uid());
+    await runTransaction(db, async (t) => {
+      const accSnap = await t.get(accRef);
+      const userSnap = await t.get(userRef);
+      if (!accSnap.exists || !userSnap.exists) throw new Error('Missing docs');
+      const lastWork = userSnap.data().lastWorkAt?.toMillis?.() || 0;
+      if (Date.now() - lastWork < j.cooldown) throw new Error('Cooldown active');
+      const currentEarned = userSnap.data().totalEarnedCents || 0;
+      t.update(accRef, { balanceCents: (accSnap.data().balanceCents||0) + reward });
+      t.update(userRef, { lastWorkAt: serverTimestamp(), totalEarnedCents: currentEarned + reward });
+      const txRef = doc(collection(db,'transactions'));
+      t.set(txRef, { fromAccount: 'WORK', toAccount: accRef.id, fromOwnerId: null, toOwnerId: uid(), amountCents: reward, currency: 'USD', status: 'completed', type: 'work', note: label, createdAt: serverTimestamp() });
+      const nRef = doc(collection(db,'notifications'));
+      t.set(nRef, { userId: uid(), type: 'work', title: 'Shift payout', body: `${label} · +$${(reward/100).toFixed(2)}`, amountCents: reward, read: false, createdAt: serverTimestamp() });
+    });
+    try { await addDoc(collection(db,'activity'), { type: 'work', amountCents: reward, createdAt: serverTimestamp() }); } catch(e){}
+    state.workLast = reward;
+    updateWorkUI();
+    $('gameOverlayText').innerHTML = `Score: <b>${score}</b>.<br><span class="result-big" style="font-size:26px">+$${fmt(reward)}</span>`;
+    btn.textContent = 'Shift Again'; btn.disabled = false;
+    showToast(`Shift payout: $${fmt(reward)}`);
+  } catch(e) {
+    $('gameOverlayText').innerHTML = `<span style="color:var(--red)">${prettify(e)}</span>`;
+    btn.textContent = 'Retry'; btn.disabled = false;
+  }
+}
+
+setInterval(() => {
+  if (state.isLocalGuest) processLocalTick();
+  if (document.querySelector('.tab.active')?.dataset.tab === 'work') updateWorkUI();
+  updatePaydayButton();
+}, 1000);
+
+window.openDepositModal = () => $('depositOverlay').classList.add('active');
+window.closeDepositModal = () => {
+  const overlay = $('depositOverlay');
+  overlay.classList.add('closing');
+  setTimeout(() => overlay.classList.remove('active', 'closing'), 250);
+};
+
+window.submitDeposit = async () => {
+  const accountId = $('depFromAcc').value;
+  const amountUsd = parseFloat($('depAmount').value);
+  if (!accountId) return showToast('Select account','error');
+  if (!amountUsd || amountUsd < 100) return showToast('Minimum $100','error');
+  const amountCents = Math.round(amountUsd * 100);
+  const from = state.accounts.find(a => a.id === accountId);
+  if (from && from.balanceCents < amountCents) return showToast('Insufficient funds','error');
+  const btn = $('depOpenBtn'); btn.disabled = true; btn.innerHTML = '<span class="ldr"></span>';
+
+  if (state.isLocalGuest) {
+    try {
+      state.guestData.account.balanceCents -= amountCents;
+      state.guestData.profile.netWorthCents = state.guestData.account.balanceCents;
+      const depId = 'dep_'+Date.now();
+      state.guestData.deposits.unshift({
+        id: depId, ownerId:'local_guest', accountId:'local_main',
+        amountCents, rate: CFG.DEPOSIT_RATE_TICK, status:'active',
+        openedAt: tsNow(), lastAccrualAt: tsNow(),
+      });
+      state.guestData.transactions.unshift({
+        id:'tx_depopen_'+Date.now(), fromAccount:'local_main', toAccount:'DEPOSIT',
+        fromOwnerId:'local_guest', toOwnerId:'local_guest',
+        amountCents, currency:'USD', status:'completed',
+        type:'deposit_open', note:'Deposit opened', createdAt: tsNow(),
+      });
+      saveGuestData(); syncGuestToState();
+      renderAccounts(); renderDeposits(); renderTransactions(); renderProfile(); renderSettings();
+      showToast('Deposit opened'); closeDepositModal(); $('depAmount').value = '';
+    } catch(e) { showToast(e.message,'error'); }
+    finally { btn.disabled = false; btn.textContent = 'Open'; }
+    return;
+  }
+
+  try {
+    const accRef = doc(db,'accounts',accountId);
+    const depRef = doc(collection(db,'deposits'));
+    await runTransaction(db, async (t) => {
+      const accSnap = await t.get(accRef);
+      if (!accSnap.exists) throw new Error('Account missing');
+      if (accSnap.data().ownerId !== uid()) throw new Error('Not your account');
+      if (accSnap.data().balanceCents < amountCents) throw new Error('Insufficient funds');
+      t.update(accRef, { balanceCents: accSnap.data().balanceCents - amountCents });
+      t.set(depRef, { ownerId: uid(), accountId, amountCents, rate: CFG.DEPOSIT_RATE_TICK, status: 'active', openedAt: serverTimestamp(), lastAccrualAt: serverTimestamp() });
+      const txRef = doc(collection(db,'transactions'));
+      t.set(txRef, { fromAccount: accountId, toAccount: 'DEPOSIT', fromOwnerId: uid(), toOwnerId: uid(), amountCents, currency: 'USD', status: 'completed', type: 'deposit_open', note: 'Deposit opened', createdAt: serverTimestamp() });
+    });
+    showToast('Deposit opened'); closeDepositModal(); $('depAmount').value = '';
+  } catch(e) { showToast(prettify(e),'error'); }
+  finally { btn.disabled = false; btn.textContent = 'Open'; }
+};
+
+window.closeDeposit = async (id) => {
+  if (state.isLocalGuest) {
+    try {
+      const dep = state.guestData.deposits.find(d => d.id === id);
+      if (!dep) throw new Error('Not found');
+      if (dep.status !== 'active') throw new Error('Already closed');
+      state.guestData.account.balanceCents += dep.amountCents;
+      state.guestData.profile.netWorthCents = state.guestData.account.balanceCents;
+      dep.status = 'closed';
+      state.guestData.transactions.unshift({
+        id:'tx_depclose_'+Date.now(), fromAccount:'DEPOSIT', toAccount:'local_main',
+        fromOwnerId:'local_guest', toOwnerId:'local_guest',
+        amountCents: dep.amountCents, currency:'USD', status:'completed',
+        type:'deposit_close', note:'Deposit closed', createdAt: tsNow(),
+      });
+      saveGuestData(); syncGuestToState();
+      renderAccounts(); renderDeposits(); renderTransactions(); renderProfile(); renderSettings();
+      showToast('Deposit closed');
+    } catch(e) { showToast(e.message,'error'); }
+    return;
+  }
+
+  try {
+    const depRef = doc(db,'deposits',id);
+    const depSnap = await getDoc(depRef);
+    if (!depSnap.exists() || depSnap.data().ownerId !== uid()) throw new Error('Not your deposit');
+    if (depSnap.data().status !== 'active') throw new Error('Already closed');
+    const amount = depSnap.data().amountCents;
+    const accRef = doc(db,'accounts',depSnap.data().accountId);
+    await runTransaction(db, async (t) => {
+      const accSnap = await t.get(accRef);
+      const dSnap = await t.get(depRef);
+      if (!accSnap.exists || !dSnap.exists) throw new Error('Missing');
+      if (dSnap.data().status !== 'active') return;
+      t.update(accRef, { balanceCents: accSnap.data().balanceCents + amount });
+      t.update(depRef, { status: 'closed', closedAt: serverTimestamp() });
+      const txRef = doc(collection(db,'transactions'));
+      t.set(txRef, { fromAccount: 'DEPOSIT', toAccount: accRef.id, fromOwnerId: uid(), toOwnerId: uid(), amountCents: amount, currency: 'USD', status: 'completed', type: 'deposit_close', note: 'Deposit closed', createdAt: serverTimestamp() });
+    });
+    showToast('Deposit closed');
+  } catch(e) { showToast(prettify(e),'error'); }
+};
+
+window.openPayday = () => {
+  const last = state.profile?.lastPayDayAt?.toMillis?.() || 0;
+  const ready = Date.now() - last >= 86400000;
+  const btn = $('paydayClaimBtn');
+  if (ready) {
+    $('paydayTitle').textContent = 'Daily PayDay';
+    $('paydayText').textContent = 'Claim your reward.';
+    $('paydayAmount').textContent = '$2,500.00';
+    btn.disabled = false; btn.textContent = 'Claim';
+  } else {
+    const wait = Math.ceil((86400000 - (Date.now()-last)) / 3600000);
+    $('paydayTitle').textContent = 'Come back later';
+    $('paydayText').textContent = `Next reward in ~${wait}h.`;
+    $('paydayAmount').textContent = '$0.00';
+    btn.disabled = true; btn.textContent = 'Not yet';
+  }
+  $('paydayOverlay').classList.add('active');
+};
+window.closePayday = () => {
+  const overlay = $('paydayOverlay');
+  overlay.classList.add('closing');
+  setTimeout(() => overlay.classList.remove('active', 'closing'), 250);
+};
+
+window.claimPayday = async () => {
+  const btn = $('paydayClaimBtn'); btn.disabled = true; btn.innerHTML = '<span class="ldr"></span>';
+  const amount = CFG.PAYDAY_AMOUNT;
+
+  if (state.isLocalGuest) {
+    try {
+      const last = state.guestData.profile.lastPayDayAt?.toMillis?.() || 0;
+      if (Date.now() - last < 86400000) throw new Error('Come back tomorrow');
+      state.guestData.account.balanceCents += amount;
+      state.guestData.profile.totalEarnedCents = (state.guestData.profile.totalEarnedCents || 0) + amount;
+      state.guestData.profile.netWorthCents = state.guestData.account.balanceCents;
+      state.guestData.profile.lastPayDayAt = tsNow();
+      state.guestData.transactions.unshift({
+        id:'tx_payday_'+Date.now(), fromAccount:'PAYDAY', toAccount:'local_main',
+        fromOwnerId:null, toOwnerId:'local_guest',
+        amountCents: amount, currency:'USD', status:'completed',
+        type:'payday', note:'Daily reward', createdAt: tsNow(),
+      });
+      saveGuestData(); syncGuestToState();
+      renderAccounts(); renderTransactions(); renderProfile(); renderSettings();
+      showToast(`+$${fmt(amount)}`); closePayday();
+    } catch(e) { showToast(e.message,'error'); btn.disabled = false; btn.textContent = 'Claim'; }
+    return;
+  }
+
+  try {
+    const accRef = doc(db, 'accounts', 'main_' + uid());
+    const userRef = doc(db,'users',uid());
+    await runTransaction(db, async (t) => {
+      const accSnap = await t.get(accRef);
+      const userSnap = await t.get(userRef);
+      if (!accSnap.exists || !userSnap.exists) throw new Error('Missing');
+      const last = userSnap.data().lastPayDayAt?.toMillis?.() || 0;
+      if (Date.now() - last < 86400000) throw new Error('Come back tomorrow');
+      const currentEarned = userSnap.data().totalEarnedCents || 0;
+      t.update(accRef, { balanceCents: (accSnap.data().balanceCents||0) + amount });
+      t.update(userRef, { lastPayDayAt: serverTimestamp(), totalEarnedCents: currentEarned + amount });
+      const txRef = doc(collection(db,'transactions'));
+      t.set(txRef, { fromAccount: 'PAYDAY', toAccount: accRef.id, fromOwnerId: null, toOwnerId: uid(), amountCents: amount, currency: 'USD', status: 'completed', type: 'payday', note: 'Daily reward', createdAt: serverTimestamp() });
+    });
+    showToast(`+$${fmt(amount)}`); closePayday();
+  } catch(e) { showToast(prettify(e),'error'); btn.disabled = false; btn.textContent = 'Claim'; }
+};
+
+window.recalculateEarned = async () => {
+  if (state.isLocalGuest) {
+    try {
+      const earningTypes = ['welcome','payroll','work','payday','deposit_interest'];
+      let total = 0;
+      state.guestData.transactions.forEach(t => {
+        if (earningTypes.includes(t.type)) total += (t.amountCents || 0);
+        else if (t.type === 'transfer') total += (t.amountCents || 0);
+      });
+      state.guestData.profile.totalEarnedCents = total;
+      saveGuestData(); syncGuestToState(); renderProfile(); renderSettings();
+      showToast(`Recalculated: $${fmt(total)}`);
+    } catch(e) { showToast('Recalculate failed','error'); }
+    return;
+  }
+  if (!uid()) return;
+  try {
+    const accId = 'main_' + uid();
+    const userRef = doc(db, 'users', uid());
+    const [outQ, inQ] = await Promise.all([
+      getDocs(query(collection(db,'transactions'), where('fromAccount','==',accId), limit(500))),
+      getDocs(query(collection(db,'transactions'), where('toAccount','==',accId), limit(500))),
+    ]);
+    const earningTypes = ['welcome','payroll','work','payday','deposit_interest'];
+    let total = 0;
+    inQ.forEach(d => {
+      const t = d.data();
+      if (earningTypes.includes(t.type)) total += (t.amountCents || 0);
+      else if (t.type === 'transfer') total += (t.amountCents || 0);
+    });
+    await updateDoc(userRef, { totalEarnedCents: total });
+    showToast(`Recalculated: $${fmt(total)}`);
+  } catch(e) { console.warn(e); showToast('Recalculate failed', 'error'); }
+};
+
+window.openProfile = () => { $('editName').value = state.profile?.displayName || ''; $('profileOverlay').classList.add('active'); };
+window.closeProfile = () => {
+  const overlay = $('profileOverlay');
+  overlay.classList.add('closing');
+  setTimeout(() => overlay.classList.remove('active', 'closing'), 250);
+};
+window.saveProfile = async () => {
+  const name = $('editName').value.trim();
+  if (!name) return showToast('Enter a name','error');
+
+  if (state.isLocalGuest) {
+    state.guestData.profile.displayName = name;
+    saveGuestData(); syncGuestToState();
+    renderProfile(); renderSettings();
+    showToast('Profile updated'); closeProfile();
+    return;
+  }
+  try {
+    await updateDoc(doc(db,'users',uid()), { displayName: name });
+    if (state.user.displayName !== name) await updateProfile(state.user, { displayName: name }).catch(()=>{});
+    showToast('Profile updated'); closeProfile();
+  } catch(e) { showToast(prettify(e),'error'); }
+};
+
+window.copyCard = async () => {
+  const cardNum = state.accounts[0]?.cardNumber;
+  if (!cardNum) return;
+  try { await navigator.clipboard.writeText(cardNum); showToast('Card number copied'); }
+  catch(e) { showToast('Copy failed','error'); }
+};
+
+window.openNotifications = async () => {
+  $('notifOverlay').classList.add('active');
+  if (state.isLocalGuest) {
+    state.guestData.notifications.forEach(n => n.read = true);
+    saveGuestData();
+    $('notifDot').style.display = 'none';
+    return;
+  }
+  const unread = state.notifications.filter(n => !n.read);
+  if (unread.length) {
+    const batch = writeBatch(db);
+    unread.forEach(n => batch.update(doc(db,'notifications',n.id), { read: true }));
+    await batch.commit().catch(()=>{});
+  }
+};
+window.closeNotifications = () => {
+  const overlay = $('notifOverlay');
+  overlay.classList.add('closing');
+  setTimeout(() => overlay.classList.remove('active', 'closing'), 250);
+};
+
+let toastTimer;
+window.showToast = (msg, type='') => {
+  const t = $('toast');
+  t.textContent = msg;
+  t.className = 'toast show ' + type;
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove('show'), 3000);
+};
+
+$('passInput').addEventListener('keydown', e => { if (e.key === 'Enter') handleAuth(); });
+document.addEventListener('gesturestart', e => e.preventDefault());
+let lastTouch = 0;
+document.addEventListener('touchend', e => {
+  const now = Date.now();
+  if (now - lastTouch < 300) e.preventDefault();
+  lastTouch = now;
+}, { passive: false });
+
+setMode('login');
+renderJobs();
+tryAutoEnterGuest();
+</script>
+</body>
+</html>
